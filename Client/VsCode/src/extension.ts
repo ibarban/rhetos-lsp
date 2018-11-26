@@ -6,13 +6,18 @@ import * as path from "path";
 import * as fs from "fs";
 
 const languageServerPaths = [
-	"server/rhetosLanguageServer.dll",
-	"../../rhetosLanguageServer/bin/Debug/netcoreapp2.0/rhetosLanguageServer.dll",
+	"server/RhetosLanguageServer.exe",
+	"../../RhetosLanguageServer/bin/Debug/RhetosLanguageServer.exe",
+]
+
+const languageServerExe = [
+	"server/RhetosLanguageServer.exe",
+	"../../RhetosLanguageServer/bin/Debug/RhetosLanguageServer.exe",
 ]
 
 function activateLanguageServer(context: vscode.ExtensionContext) {
 	let serverModule: string = null;
-	for (let p of languageServerPaths) {
+	for (let p of languageServerExe) {
 		p = context.asAbsolutePath(p);
 
 		if (fs.existsSync(p)) {
@@ -26,8 +31,8 @@ function activateLanguageServer(context: vscode.ExtensionContext) {
 		let workPath = path.dirname(serverModule);
 
 		let serverOptions: languageClient.ServerOptions = {
-			run: { command: "dotnet", args: [serverModule], options: { cwd: workPath } },
-			debug: { command: "dotnet", args: [serverModule, "--debug"], options: { cwd: workPath } }
+			run: { command: serverModule, args: [], options: { cwd: workPath } },
+			debug: { command: serverModule, args: ["--debug"], options: { cwd: workPath } }
 		}
 
 		let clientOptions: languageClient.LanguageClientOptions = {

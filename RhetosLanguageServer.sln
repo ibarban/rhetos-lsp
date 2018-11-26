@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer.VsCode", "LanguageServer.VsCode\LanguageServer.VsCode.csproj", "{E3E1B6AA-38E8-4762-91D5-52AAEA38AF96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLanguageServer", "RhetosLanguageServer\RhetosLanguageServer.csproj", "{8D290072-8C41-48D3-B7F0-B1401335BB4B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3E1B6AA-38E8-4762-91D5-52AAEA38AF96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3E1B6AA-38E8-4762-91D5-52AAEA38AF96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3E1B6AA-38E8-4762-91D5-52AAEA38AF96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3E1B6AA-38E8-4762-91D5-52AAEA38AF96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D290072-8C41-48D3-B7F0-B1401335BB4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D290072-8C41-48D3-B7F0-B1401335BB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D290072-8C41-48D3-B7F0-B1401335BB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D290072-8C41-48D3-B7F0-B1401335BB4B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F1FE16E-A9EB-44A3-872B-805354EE4AA9}
+	EndGlobalSection
+EndGlobal
