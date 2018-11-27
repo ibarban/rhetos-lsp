@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -8,12 +9,22 @@ using JsonRpc.Standard.Server;
 using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
+using Rhetos.Dsl;
 
 namespace RhetosLanguageServer.Services
 {
     [JsonRpcScope(MethodPrefix = "textDocument/")]
     public class TextDocumentService : RhetosLanguageServiceBase
     {
+        private static List<string> Keywords = new List<string>();
+
+        private readonly DslModel _dslModel;
+
+        public TextDocumentService(DslModel dslModel)
+        {
+            _dslModel = dslModel;
+        }
+
         [JsonRpcMethod]
         public async Task<Hover> Hover(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
         {
@@ -95,7 +106,7 @@ namespace RhetosLanguageServer.Services
         [JsonRpcMethod]
         public CompletionList Completion(TextDocumentIdentifier textDocument, Position position)
         {
-            return new CompletionList(PredefinedCompletionItems);
+            return new CompletionList(_dslModel.ConceptKeywords.Select(x => new CompletionItem { Label = x, Kind = CompletionItemKind.Keyword }));
         }
 
     }

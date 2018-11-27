@@ -5,15 +5,12 @@ import * as languageClient from "vscode-languageclient";
 import * as path from "path";
 import * as fs from "fs";
 
-const languageServerPaths = [
-	"server/RhetosLanguageServer.exe",
-	"../../RhetosLanguageServer/bin/Debug/RhetosLanguageServer.exe",
-]
-
 const languageServerExe = [
 	"server/RhetosLanguageServer.exe",
 	"../../RhetosLanguageServer/bin/Debug/RhetosLanguageServer.exe",
 ]
+
+const rhetosServerConfigFileName = "RhetosServerPath.config";
 
 function activateLanguageServer(context: vscode.ExtensionContext) {
 	let serverModule: string = null;
@@ -26,13 +23,13 @@ function activateLanguageServer(context: vscode.ExtensionContext) {
 		}
 	}
 
-	checkRhetosServerSetup(context, ()=>{
+	checkRhetosServerSetup(context, (rhetosServerLocation: string)=>{
 		if (!serverModule) throw new URIError("Cannot find the language server module.");
 		let workPath = path.dirname(serverModule);
 
 		let serverOptions: languageClient.ServerOptions = {
-			run: { command: serverModule, args: [], options: { cwd: workPath } },
-			debug: { command: serverModule, args: ["--debug"], options: { cwd: workPath } }
+			run: { command: serverModule, args: ["--rhetos-server-path", rhetosServerLocation], options: { cwd: workPath } },
+			debug: { command: serverModule, args: ["--debug", "--rhetos-server-path", rhetosServerLocation], options: { cwd: workPath } }
 		}
 
 		let clientOptions: languageClient.LanguageClientOptions = {
@@ -52,9 +49,9 @@ function activateLanguageServer(context: vscode.ExtensionContext) {
 	});
 }
 
-export function checkRhetosServerSetup(context: vscode.ExtensionContext, checkSuccesfull: () => void)
+export function checkRhetosServerSetup(context: vscode.ExtensionContext, checkSuccesfull: (rhetosServerLocation: string) => void)
 {
-	let rhetosServerFolderPath = vscode.workspace.rootPath + "/RhetosServerPath.txt";
+	let rhetosServerFolderPath = vscode.workspace.rootPath + "/" + rhetosServerConfigFileName;
 	var fs = require('fs');
 	if (fs.existsSync(rhetosServerFolderPath)) {
 		var fs = require('fs');
@@ -65,14 +62,14 @@ export function checkRhetosServerSetup(context: vscode.ExtensionContext, checkSu
 				var rhetosServerLocation = data;
 				if(fs.existsSync(rhetosServerLocation + "/bin/Plugins"))
 				{
-					checkSuccesfull();
+					checkSuccesfull(rhetosServerLocation);
 				}else{
 					vscode.window.showErrorMessage("The Rhetos server is not deployed yet. Please run DeployPackages.exe and then restart VSCode.");
 				}
 			}
 			});
 	}else{
-		vscode.window.showErrorMessage("RhetosServerPath.txt file does not exist. Please create the file and then restart VSCode.");
+		vscode.window.showErrorMessage(rhetosServerConfigFileName + " file does not exist. Please create the file and then restart VSCode.");
 	}
 }
 

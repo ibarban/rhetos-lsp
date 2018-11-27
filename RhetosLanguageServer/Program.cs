@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using JsonRpc.Standard.Client;
@@ -13,6 +14,14 @@ using JsonRpc.Streams;
 using LanguageServer.VsCode;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
+using Autofac;
+using Rhetos.Extensibility;
+using Rhetos.Dsl;
+using Rhetos.Utilities;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.ReflectionModel;
+using System.ComponentModel.Composition;
+using RhetosLanguageServer.Services;
 
 namespace RhetosLanguageServer
 {
@@ -25,6 +34,23 @@ namespace RhetosLanguageServer
             while (!Debugger.IsAttached) Thread.Sleep(1000);
             Debugger.Break();
 #endif
+            var argsList = new List<string>(args);
+
+            var rhetosServerPathIndex = argsList.IndexOf("--rhetos-server-path");
+            var rhetosServerPath = "";
+            if (rhetosServerPathIndex > -1)
+                rhetosServerPath = argsList[rhetosServerPathIndex + 1];
+
+            loadKeywords(rhetosServerPath + "\\bin\\Plugins");
+            var pluginFolder = rhetosServerPath + "\\bin\\Plugins";
+            ContainerBuilder builder = new ContainerBuilder();
+            builder.RegisterType<DslModel>().SingleInstance();
+            builder.RegisterType<TextDocumentService>().SingleInstance();
+            builder.RegisterType<InitializaionService>().SingleInstance();
+            builder.RegisterType<WorkspaceService>().SingleInstance();
+            builder.RegisterType<CompletionItemService>().SingleInstance();
+            MefPluginScanner.FindAndRegisterPlugins<IConceptInfo>(builder, pluginFolder);
+
             StreamWriter logWriter = null;
             if (debugMode)
             {
@@ -59,7 +85,7 @@ namespace RhetosLanguageServer
                 }
                 // Configure & build service host
                 var session = new LanguageServerSession(client, contractResolver);
-                var host = BuildServiceHost(logWriter, contractResolver, debugMode);
+                var host = BuildServiceHost(logWriter, contractResolver, debugMode, builder.Build());
                 var serverHandler = new StreamRpcServerHandler(host,
                     StreamRpcServerHandlerOptions.ConsistentResponseSequence |
                     StreamRpcServerHandlerOptions.SupportsRequestCancellation);
@@ -75,8 +101,14 @@ namespace RhetosLanguageServer
             }
         }
 
+        private static void loadKeywords(string pluginsFolder)
+        {
+            var plugins = MefPluginScanner.FindPlugins(typeof(IConceptInfo), pluginsFolder);
+            Test.Keywords = plugins.Select(x => ConceptInfoHelper.GetKeyword(x.Type)).Where(x => !string.IsNullOrEmpty(x)).ToList();
+        }
+
         private static IJsonRpcServiceHost BuildServiceHost(TextWriter logWriter,
-            IJsonRpcContractResolver contractResolver, bool debugMode)
+            IJsonRpcContractResolver contractResolver, bool debugMode, IContainer container)
         {
             var loggerFactory = new LoggerFactory();
             loggerFactory.AddProvider(new DebugLoggerProvider(null));
@@ -87,6 +119,7 @@ namespace RhetosLanguageServer
             };
             builder.UseCancellationHandling();
             builder.Register(typeof(Program).GetTypeInfo().Assembly);
+            builder.ServiceFactory = new ServiceFactory(container);
             if (debugMode)
             {
                 // Log all the client-to-server calls.
