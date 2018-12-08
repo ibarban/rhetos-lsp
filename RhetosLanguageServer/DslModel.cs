@@ -1,31 +1,7 @@
-﻿/*
-    Copyright (C) 2014 Omega software d.o.o.
-
-    This file is part of Rhetos.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of the
-    License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-using Autofac.Features.Indexed;
-using Rhetos.Dsl;
-using Rhetos.Logging;
-using Rhetos.Utilities;
+﻿using Rhetos.Dsl;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace RhetosLanguageServer
 {
@@ -33,13 +9,36 @@ namespace RhetosLanguageServer
     {
         private readonly IEnumerable<Type> _conceptTypes;
 
+        private readonly List<ConceptInfoDocumentation> _conceptDescriptionProvider;
+
+        private List<ConceptInfoMetadata> _conceptsInfoMetadata;
+
         public List<string> ConceptKeywords { get; set; }
 
+        public List<ConceptInfoMetadata> ConceptsInfoMetadata { get; private set;}
+
         public DslModel(
-            IEnumerable<IConceptInfo> conceptPrototypes)
+            IEnumerable<IConceptInfo> conceptPrototypes, ConceptDescriptionProvider conceptDescriptionProvider)
         {
             _conceptTypes = conceptPrototypes.Select(conceptInfo => conceptInfo.GetType());
+            _conceptDescriptionProvider = conceptDescriptionProvider.ConceptInfoDescriptions;
             ConceptKeywords = _conceptTypes.Select(x => ConceptInfoHelper.GetKeyword(x)).Distinct().ToList();
+
+            ConceptsInfoMetadata = _conceptTypes.Select(x => new ConceptInfoMetadata
+            {
+                Type = x,
+                Keyword = ConceptInfoHelper.GetKeyword(x),
+                Documentation = conceptDescriptionProvider.ConceptInfoDescriptions.FirstOrDefault(y => y.ConceptType == x)
+            }).ToList();
         }
+    }
+
+    public class ConceptInfoMetadata
+    {
+        public Type Type { get; set; }
+
+        public string Keyword { get; set; }
+
+        public ConceptInfoDocumentation Documentation { get; set; }
     }
 }

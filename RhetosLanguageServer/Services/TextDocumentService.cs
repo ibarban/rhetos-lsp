@@ -110,9 +110,10 @@ namespace RhetosLanguageServer.Services
             var content = doc.Document.Content;
             var tokens = ContentTokenizer.TokenizeContent(content);
 
-           /* if (IsCurrentPositionAKeyword(tokens, GetPositionInString(content, position)))
-            {*/
-                return new CompletionList(_dslModel.ConceptKeywords.Select(x => new CompletionItem { Label = x, Kind = CompletionItemKind.Keyword, Detail = "No details" }));
+            /* if (IsCurrentPositionAKeyword(tokens, GetPositionInString(content, position)))
+             {*/
+            var a = _dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary });
+                return new CompletionList(_dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary }));
             /*}
             else
             {

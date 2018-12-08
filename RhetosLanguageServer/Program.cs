@@ -41,15 +41,11 @@ namespace RhetosLanguageServer
             if (rhetosServerPathIndex > -1)
                 rhetosServerPath = argsList[rhetosServerPathIndex + 1];
 
-            loadKeywords(rhetosServerPath + "\\bin\\Plugins");
-            var pluginFolder = rhetosServerPath + "\\bin\\Plugins";
-            ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterType<DslModel>().SingleInstance();
-            builder.RegisterType<TextDocumentService>().SingleInstance();
-            builder.RegisterType<InitializaionService>().SingleInstance();
-            builder.RegisterType<WorkspaceService>().SingleInstance();
-            builder.RegisterType<CompletionItemService>().SingleInstance();
-            MefPluginScanner.FindAndRegisterPlugins<IConceptInfo>(builder, pluginFolder);
+            var rhetosServerConfiguration = new RhetosProjectConfiguration(rhetosServerPath);
+            ContainerBuilder builder = BuildContainer(rhetosServerConfiguration);
+
+            var container = builder.Build();
+            var dslModel = container.Resolve<DslModel>();
 
             StreamWriter logWriter = null;
             if (debugMode)
@@ -85,7 +81,7 @@ namespace RhetosLanguageServer
                 }
                 // Configure & build service host
                 var session = new LanguageServerSession(client, contractResolver);
-                var host = BuildServiceHost(logWriter, contractResolver, debugMode, builder.Build());
+                var host = BuildServiceHost(logWriter, contractResolver, debugMode, container);
                 var serverHandler = new StreamRpcServerHandler(host,
                     StreamRpcServerHandlerOptions.ConsistentResponseSequence |
                     StreamRpcServerHandlerOptions.SupportsRequestCancellation);
@@ -101,10 +97,18 @@ namespace RhetosLanguageServer
             }
         }
 
-        private static void loadKeywords(string pluginsFolder)
+        private static ContainerBuilder BuildContainer(RhetosProjectConfiguration rhetosServerConfiguration)
         {
-            var plugins = MefPluginScanner.FindPlugins(typeof(IConceptInfo), pluginsFolder);
-            Test.Keywords = plugins.Select(x => ConceptInfoHelper.GetKeyword(x.Type)).Where(x => !string.IsNullOrEmpty(x)).ToList();
+            ContainerBuilder builder = new ContainerBuilder();
+            builder.RegisterType<DslModel>().SingleInstance();
+            builder.RegisterType<TextDocumentService>().SingleInstance();
+            builder.RegisterType<InitializaionService>().SingleInstance();
+            builder.RegisterType<WorkspaceService>().SingleInstance();
+            builder.RegisterType<CompletionItemService>().SingleInstance();
+            builder.RegisterInstance<RhetosProjectConfiguration>(rhetosServerConfiguration);
+            builder.RegisterType<ConceptDescriptionProvider>().SingleInstance();
+            MefPluginScanner.FindAndRegisterPlugins<IConceptInfo>(builder, rhetosServerConfiguration.PluginsFolderPath);
+            return builder;
         }
 
         private static IJsonRpcServiceHost BuildServiceHost(TextWriter logWriter,
