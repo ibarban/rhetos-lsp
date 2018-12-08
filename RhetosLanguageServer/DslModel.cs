@@ -51,10 +51,33 @@ namespace RhetosLanguageServer
 
         public string GetUserDescription(bool includeParentConcept)
         {
-            var propertyNames = Members.Select(x => x.Name);
-            if (!includeParentConcept && Members.Any() && Members.First().IsConceptInfo)
-                propertyNames = propertyNames.Skip(1);
-            var propertiesSummary = propertyNames.Any() ? "Properties: " + string.Join(" ", propertyNames.ToArray()) + "\n" : "";
+            var propertyDescriptions = new List<string>();
+            bool isFirst = true;
+            foreach (var memeber in Members)
+            {
+                if (isFirst && !includeParentConcept)
+                {
+                    isFirst = false;
+                    continue;
+                }
+
+                if (memeber.IsConceptInfo)
+                {
+                    var keywordOrType = ConceptInfoHelper.GetKeywordOrTypeName(Type);
+                    if (memeber.IsKey)
+                        propertyDescriptions.Add("Key " + " " + keywordOrType + " " + memeber.Name);
+                    else
+                        propertyDescriptions.Add(keywordOrType + " " + memeber.Name);
+                }
+                else {
+                    if (memeber.IsKey)
+                        propertyDescriptions.Add("Key " + " " + memeber.ValueType.Name + " " + memeber.Name);
+                    else
+                        propertyDescriptions.Add(memeber.ValueType.Name + " " + memeber.Name);
+                }
+            }
+
+            var propertiesSummary = propertyDescriptions.Any() ? "Properties: " + string.Join(", ", propertyDescriptions.ToArray()) + "\n" : "";
             var conceptSummary = Documentation == null ? "" : "Summary: " + Documentation.ConceptSummary;
             return propertiesSummary + conceptSummary;
         }
