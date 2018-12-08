@@ -20,10 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Globalization;
 using Rhetos.Utilities;
 using Rhetos.Dsl;
+using RhetosLSP.Utilities.Models;
 
 namespace RhetosLSP.Utilities
 {
@@ -121,6 +121,30 @@ namespace RhetosLSP.Utilities
         {
             while (PositionInTokenList < _tokenList.Count && CurrentToken.Type == TokenType.EndOfFile)
                 PositionInTokenList++;
+        }
+
+        public ConceptInfoLocation GetLocation()
+        {
+            DslScript dslScript;
+            int position;
+
+            if (PositionInTokenList < _tokenList.Count())
+            {
+                dslScript = CurrentToken.DslScript;
+                position = CurrentToken.PositionInDslScript;
+            }
+            else if (_tokenList.Count > 0)
+            {
+                dslScript = _tokenList.Last().DslScript;
+                position = dslScript.Script.Length;
+            }
+            else
+            {
+                dslScript = new DslScript { Script = "", Name = "", Path = "" };
+                position = 0;
+            }
+            var text = dslScript.Script;
+            return new ConceptInfoLocation(text, ScriptPositionReporting.Line(text, position), ScriptPositionReporting.Column(text, position), dslScript.Path);
         }
     }
 }

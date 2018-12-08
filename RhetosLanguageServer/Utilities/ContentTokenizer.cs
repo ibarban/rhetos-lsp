@@ -9,9 +9,9 @@ namespace RhetosLanguageServer
 {
     public static class ContentTokenizer
     {
-        public static List<Token> TokenizeContent(string content)
+        public static List<Token> TokenizeContent(string content, Uri uri)
         {
-            var tokenizer = new RhetosLSPUtilities.Tokenizer(new DslScriptProviderFromContent(content));
+            var tokenizer = new RhetosLSPUtilities.Tokenizer(new DslScriptProviderFromContent(content, uri));
             return tokenizer.GetTokens();
         }
 
@@ -19,13 +19,13 @@ namespace RhetosLanguageServer
         {
             public IEnumerable<DslScript> DslScripts { get; private set; }
 
-            public DslScriptProviderFromContent(string content)
+            public DslScriptProviderFromContent(string content, Uri uri)
             {
                 DslScripts = new List<DslScript> {
                     new DslScript {
-                        Name  = "",
+                        Name  = uri.Segments.Last(),
                         Script = content,
-                        Path = ""
+                        Path = uri.LocalPath
                     }
                 };
             }
