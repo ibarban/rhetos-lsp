@@ -106,8 +106,63 @@ namespace RhetosLanguageServer.Services
         [JsonRpcMethod]
         public CompletionList Completion(TextDocumentIdentifier textDocument, Position position)
         {
-            return new CompletionList(_dslModel.ConceptKeywords.Select(x => new CompletionItem { Label = x, Kind = CompletionItemKind.Keyword }));
+            var doc = Session.Documents[textDocument.Uri];
+            var content = doc.Document.Content;
+            var tokens = ContentTokenizer.TokenizeContent(content);
+
+           /* if (IsCurrentPositionAKeyword(tokens, GetPositionInString(content, position)))
+            {*/
+                return new CompletionList(_dslModel.ConceptKeywords.Select(x => new CompletionItem { Label = x, Kind = CompletionItemKind.Keyword, Detail = "No details" }));
+            /*}
+            else
+            {
+                return new CompletionList();
+            }*/
         }
 
+        public int GetPositionInString(string content, Position position)
+        {
+            var lineIndex = 0;
+            var line = 0;
+            while (line < position.Line && lineIndex != -1)
+            {
+                line = line + 1;
+                lineIndex = content.IndexOf("\n", lineIndex + 1);
+            }
+
+            if (line != position.Line)
+                return -1;
+            else
+                return lineIndex + position.Character;
+        }
+
+        public bool IsCurrentPositionAKeyword(List<Token> tokens, int position)
+        {
+            if (tokens.Count <= 2)
+                return true;
+
+            var curentTokenIndex = -1;
+            for (int i = tokens.Count - 1; i >= 0; i--)
+            {
+                var token = tokens[i];
+                if (token.PositionInDslScript <= position)
+                {
+                    curentTokenIndex = i;
+                    break;
+                }
+            }
+
+            if (curentTokenIndex < 1)
+                return false;
+
+            var tokenBeforeIndex = curentTokenIndex - 1;
+
+            if (tokens[tokenBeforeIndex].Type == TokenType.Special &&
+                position <= tokens[curentTokenIndex].PositionInDslScript + tokens[curentTokenIndex].Value.Length)
+                return true;
+            else
+                return false;
+
+        }
     }
 }

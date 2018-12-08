@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer.VsCode", "La
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLanguageServer", "RhetosLanguageServer\RhetosLanguageServer.csproj", "{8D290072-8C41-48D3-B7F0-B1401335BB4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLSP.Utilities", "RhetosLSP.Utilities\RhetosLSP.Utilities.csproj", "{D0BEE72C-2FD4-4C82-A29D-ED5F4FB8A516}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8D290072-8C41-48D3-B7F0-B1401335BB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D290072-8C41-48D3-B7F0-B1401335BB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D290072-8C41-48D3-B7F0-B1401335BB4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0BEE72C-2FD4-4C82-A29D-ED5F4FB8A516}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0BEE72C-2FD4-4C82-A29D-ED5F4FB8A516}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0BEE72C-2FD4-4C82-A29D-ED5F4FB8A516}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0BEE72C-2FD4-4C82-A29D-ED5F4FB8A516}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

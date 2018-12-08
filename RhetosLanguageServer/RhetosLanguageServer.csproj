@@ -286,6 +286,7 @@
     <Compile Include="Test.cs" />
     <Compile Include="Utilities\MefPluginScanner.cs" />
     <Compile Include="Utilities\PluginInfo.cs" />
+    <Compile Include="Utilities\ContentTokenizer.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
