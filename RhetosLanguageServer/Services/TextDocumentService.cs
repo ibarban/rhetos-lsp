@@ -10,6 +10,7 @@ using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 using Rhetos.Dsl;
+using Rhetos.Logging;
 
 using Token = Rhetos.Dsl.Token;
 using TokenType = Rhetos.Dsl.TokenType;
@@ -24,11 +25,14 @@ namespace RhetosLanguageServer.Services
 
         private readonly DslModel _dslModel;
 
+        ILogger _tokenLogger;
+
         private readonly DslParser _dslParser;
 
-        public TextDocumentService(DslModel dslModel, DslParser dslParser)
+        public TextDocumentService(ILogProvider logProvider, DslModel dslModel, DslParser dslParser)
         {
             _dslModel = dslModel;
+            _tokenLogger = logProvider.GetLogger("Token parser");
             _dslParser = dslParser;
         }
 
@@ -121,7 +125,7 @@ namespace RhetosLanguageServer.Services
             /* if (IsCurrentPositionAKeyword(tokens, GetPositionInString(content, position)))
              {*/
             var a = _dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary });
-                return new CompletionList(_dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary }));
+                return new CompletionList(_dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.GetUserDescription(false) }));
             /*}
             else
             {

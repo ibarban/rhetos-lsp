@@ -33,7 +33,7 @@ namespace RhetosLanguageServer.Services
         [JsonRpcMethod(IsNotification = true)]
         public async Task Initialized()
         {
-            await Client.Window.ShowMessage(MessageType.Info, "Hello from language server.");
+            await Client.Window.ShowMessage(MessageType.Info, "Rhetos language server initialized.");
         }
 
         [JsonRpcMethod]
