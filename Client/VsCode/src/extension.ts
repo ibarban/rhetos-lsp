@@ -56,19 +56,18 @@ export function checkRhetosServerSetup(context: vscode.ExtensionContext, checkSu
 	if (fs.existsSync(rhetosServerFolderPath)) {
 		var fs = require('fs');
 		fs.readFile(rhetosServerFolderPath, 'utf8', function(err, data) {
-			if (err){
+			if (err) {
 				vscode.window.showErrorMessage("Error in reading the Rhetos server location.");
-			}else{
+			} else {
 				var rhetosServerLocation = data;
-				if(fs.existsSync(rhetosServerLocation + "/bin/Plugins"))
-				{
+				if (fs.existsSync(rhetosServerLocation + "/bin/Plugins")) {
 					checkSuccesfull(rhetosServerLocation);
-				}else{
+				} else {
 					vscode.window.showErrorMessage("The Rhetos server is not deployed yet. Please run DeployPackages.exe and then restart VSCode.");
 				}
 			}
-			});
-	}else{
+		});
+	} else {
 		vscode.window.showErrorMessage(rhetosServerConfigFileName + " file does not exist. Please create the file and then restart VSCode.");
 	}
 }

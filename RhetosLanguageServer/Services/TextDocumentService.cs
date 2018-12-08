@@ -11,6 +11,10 @@ using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 using Rhetos.Dsl;
 
+using Token = Rhetos.Dsl.Token;
+using TokenType = Rhetos.Dsl.TokenType;
+using DslParser = RhetosLSP.Utilities.DslParser;
+
 namespace RhetosLanguageServer.Services
 {
     [JsonRpcScope(MethodPrefix = "textDocument/")]
@@ -20,9 +24,12 @@ namespace RhetosLanguageServer.Services
 
         private readonly DslModel _dslModel;
 
-        public TextDocumentService(DslModel dslModel)
+        private readonly DslParser _dslParser;
+
+        public TextDocumentService(DslModel dslModel, DslParser dslParser)
         {
             _dslModel = dslModel;
+            _dslParser = dslParser;
         }
 
         [JsonRpcMethod]
@@ -109,7 +116,8 @@ namespace RhetosLanguageServer.Services
             var doc = Session.Documents[textDocument.Uri];
             var content = doc.Document.Content;
             var tokens = ContentTokenizer.TokenizeContent(content);
-
+            var concepts = _dslParser.Parse(tokens);
+            Client.Window.ShowMessage(MessageType.Info, string.Join(", ", concepts.Select(x => x.GetShortDescription())));
             /* if (IsCurrentPositionAKeyword(tokens, GetPositionInString(content, position)))
              {*/
             var a = _dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary });
