@@ -300,6 +300,10 @@
       <Project>{e3e1b6aa-38e8-4762-91d5-52aaea38af96}</Project>
       <Name>LanguageServer.VsCode</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RhetosLSP.Utilities\RhetosLSP.Utilities.csproj">
+      <Project>{d0bee72c-2fd4-4c82-a29d-ed5f4fb8a516}</Project>
+      <Name>RhetosLSP.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
