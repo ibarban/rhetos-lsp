@@ -45,6 +45,11 @@ namespace RhetosLSPUtilities
 
                     int startPosition = scriptPosition;
                     Token t = TokenizerInternals.GetNextToken_ValueType(dslScript, ref scriptPosition);
+                    if (scriptPosition < 0)
+                    {
+                        // Current token is invalid
+                        break;
+                    }
                     t.DslScript = dslScript;
                     t.PositionInDslScript = startPosition;
 
@@ -53,6 +58,12 @@ namespace RhetosLSPUtilities
                 }
 
                 _tokens.Add(new Token { DslScript = dslScript, PositionInDslScript = dslScript.Script.Length, Type = TokenType.EndOfFile, Value = "" });
+
+                if (scriptPosition < 0)
+                {
+                    // The rest of script is invalid
+                    break;
+                }
             }
         }
     }
@@ -156,7 +167,12 @@ namespace RhetosLSPUtilities
                 while (end < script.Length && script[end] != quote)
                     end++;
                 if (end >= script.Length)
-                    throw new DslSyntaxException("Unexpected end of script within quoted string. Missing closing character: " + quote + ". " + dslScript.ReportPosition(begin));
+                {
+                    //throw new DslSyntaxException("Unexpected end of script within quoted string. Missing closing character: " + quote + ". " + dslScript.ReportPosition(begin));
+                    // If snppet isn't closed discard this token, and stop further tokenizing
+                    end = -1;
+                    break;
+                }
                 if (end + 1 < script.Length && script[end + 1] == quote)
                 {
                     // Two quote characters make escape sequence for a quote within the string:
@@ -171,7 +187,7 @@ namespace RhetosLSPUtilities
                 }
             }
 
-            return script.Substring(begin + 1, end - begin - 2).Replace(new string(quote, 2), new string(quote, 1));
+            return end >= 0 ? script.Substring(begin + 1, end - begin - 2).Replace(new string(quote, 2), new string(quote, 1)) : "INVALID";
         }
 
         private static bool IsExternalTextStart(char c)

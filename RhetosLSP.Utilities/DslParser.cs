@@ -11,10 +11,10 @@ namespace RhetosLSP.Utilities
 {
     public class DslParser : IDslParser
     {
-        protected readonly Rhetos.Dsl.Tokenizer _tokenizer;
+        protected readonly RhetosLSPUtilities.Tokenizer _tokenizer;
         protected readonly IConceptInfo[] _conceptInfoPlugins;
 
-        public DslParser(Rhetos.Dsl.Tokenizer tokenizer, IConceptInfo[] conceptInfoPlugins)
+        public DslParser(RhetosLSPUtilities.Tokenizer tokenizer, IConceptInfo[] conceptInfoPlugins)
         {
             _tokenizer = tokenizer;
             _conceptInfoPlugins = conceptInfoPlugins;
@@ -57,7 +57,7 @@ namespace RhetosLSP.Utilities
                 .Where(cm => cm.conceptKeyword != null)
                 .ToList();
 
-            var result = conceptMetadata.Select(cm => new RhetosLSP.Utilities.GenericParser(cm.conceptType, cm.conceptKeyword)).ToList<IConceptParser>();
+            var result = conceptMetadata.Select(cm => new GenericParser(cm.conceptType, cm.conceptKeyword)).ToList<IConceptParser>();
             return result;
         }
 

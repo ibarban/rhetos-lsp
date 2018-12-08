@@ -11,7 +11,7 @@ namespace RhetosLanguageServer
     {
         public static List<Token> TokenizeContent(string content)
         {
-            var tokenizer = new Tokenizer(new DslScriptProviderFromContent(content));
+            var tokenizer = new RhetosLSPUtilities.Tokenizer(new DslScriptProviderFromContent(content));
             return tokenizer.GetTokens();
         }
 
