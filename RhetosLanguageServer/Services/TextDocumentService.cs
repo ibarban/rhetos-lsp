@@ -10,6 +10,11 @@ using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 using Rhetos.Dsl;
+using Rhetos.Logging;
+
+using Token = Rhetos.Dsl.Token;
+using TokenType = Rhetos.Dsl.TokenType;
+using DslParser = RhetosLSP.Utilities.DslParser;
 
 namespace RhetosLanguageServer.Services
 {
@@ -20,9 +25,15 @@ namespace RhetosLanguageServer.Services
 
         private readonly DslModel _dslModel;
 
-        public TextDocumentService(DslModel dslModel)
+        ILogger _tokenLogger;
+
+        private readonly DslParser _dslParser;
+
+        public TextDocumentService(ILogProvider logProvider, DslModel dslModel, DslParser dslParser)
         {
             _dslModel = dslModel;
+            _tokenLogger = logProvider.GetLogger("Token parser");
+            _dslParser = dslParser;
         }
 
         [JsonRpcMethod]
@@ -109,11 +120,12 @@ namespace RhetosLanguageServer.Services
             var doc = Session.Documents[textDocument.Uri];
             var content = doc.Document.Content;
             var tokens = ContentTokenizer.TokenizeContent(content);
-
+            var concepts = _dslParser.Parse(tokens);
+            Client.Window.ShowMessage(MessageType.Info, string.Join(", ", concepts.Select(x => x.GetShortDescription())));
             if (IsCurrentPositionAKeyword(content, GetPositionInString(content, position)))
             {
                 var a = _dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary });
-                return new CompletionList(_dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary }));
+                return new CompletionList(_dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.GetUserDescription(false) }));
             }
             else
             {

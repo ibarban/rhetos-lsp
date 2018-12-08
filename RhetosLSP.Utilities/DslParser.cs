@@ -1,37 +1,30 @@
-﻿using NuGet;
-using Rhetos.Dsl;
+﻿using Rhetos.Dsl;
 using Rhetos.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace RhetosLSP.Utilities
 {
-    public class DslParser : IDslParser
+    public class DslParser
     {
-        protected readonly Rhetos.Dsl.Tokenizer _tokenizer;
         protected readonly IConceptInfo[] _conceptInfoPlugins;
 
-        public DslParser(Rhetos.Dsl.Tokenizer tokenizer, IConceptInfo[] conceptInfoPlugins)
+        public DslParser(IConceptInfo[] conceptInfoPlugins)
         {
-            _tokenizer = tokenizer;
             _conceptInfoPlugins = conceptInfoPlugins;
         }
 
-        public IEnumerable<IConceptInfo> ParsedConcepts
+        public List<IConceptInfo> Parse(List<Token> tokens)
         {
-            get
-            {
-                IEnumerable<IConceptParser> parsers = CreateGenericParsers();
-                var parsedConcepts = ExtractConcepts(parsers);
-                var alternativeInitializationGeneratedReferences = InitializeAlternativeInitializationConcepts(parsedConcepts);
-                return new[] { CreateInitializationConcept() }
-                    .Concat(parsedConcepts)
-                    .Concat(alternativeInitializationGeneratedReferences)
-                    .ToList();
-            }
+            IEnumerable<IConceptParser> parsers = CreateGenericParsers();
+            var parsedConcepts = ExtractConcepts(parsers, tokens);
+            //var alternativeInitializationGeneratedReferences = InitializeAlternativeInitializationConcepts(parsedConcepts);
+            return new[] { CreateInitializationConcept() }
+                .Concat(parsedConcepts)
+                //.Concat(alternativeInitializationGeneratedReferences)
+                .ToList();
         }
 
         //=================================================================
@@ -57,13 +50,13 @@ namespace RhetosLSP.Utilities
                 .Where(cm => cm.conceptKeyword != null)
                 .ToList();
 
-            var result = conceptMetadata.Select(cm => new RhetosLSP.Utilities.GenericParser(cm.conceptType, cm.conceptKeyword)).ToList<IConceptParser>();
+            var result = conceptMetadata.Select(cm => new GenericParser(cm.conceptType, cm.conceptKeyword)).ToList<IConceptParser>();
             return result;
         }
 
-        protected IEnumerable<IConceptInfo> ExtractConcepts(IEnumerable<IConceptParser> conceptParsers)
+        protected IEnumerable<IConceptInfo> ExtractConcepts(IEnumerable<IConceptParser> conceptParsers, List<Token> tokens)
         {
-            TokenReader tokenReader = new TokenReader(_tokenizer.GetTokens(), 0);
+            TokenReader tokenReader = new TokenReader(tokens, 0);
 
             List<IConceptInfo> newConcepts = new List<IConceptInfo>();
             Stack<IConceptInfo> context = new Stack<IConceptInfo>();
@@ -71,10 +64,18 @@ namespace RhetosLSP.Utilities
             tokenReader.SkipEndOfFile();
             while (!tokenReader.EndOfInput)
             {
-                IConceptInfo conceptInfo = ParseNextConcept(tokenReader, context, conceptParsers);
-                newConcepts.Add(conceptInfo);
-
-                UpdateContextForNextConcept(tokenReader, context, conceptInfo);
+                try
+                {
+                    IConceptInfo conceptInfo = ParseNextConcept(tokenReader, context, conceptParsers);
+                    newConcepts.Add(conceptInfo);
+                    UpdateContextForNextConcept(tokenReader, context, conceptInfo);
+                }
+                catch (DslSyntaxException e)
+                {
+                    // When error occurs stop further parsing
+                    context.Clear();
+                    break;
+                }
 
                 if (context.Count == 0)
                     tokenReader.SkipEndOfFile();
@@ -186,5 +187,4 @@ namespace RhetosLSP.Utilities
             //return newConcepts;
         }
     }
-
 }

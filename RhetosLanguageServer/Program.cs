@@ -22,6 +22,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.ReflectionModel;
 using System.ComponentModel.Composition;
 using RhetosLanguageServer.Services;
+using Rhetos.Logging;
 
 namespace RhetosLanguageServer
 {
@@ -42,10 +43,6 @@ namespace RhetosLanguageServer
                 rhetosServerPath = argsList[rhetosServerPathIndex + 1];
 
             var rhetosServerConfiguration = new RhetosProjectConfiguration(rhetosServerPath);
-            ContainerBuilder builder = BuildContainer(rhetosServerConfiguration);
-
-            var container = builder.Build();
-            var dslModel = container.Resolve<DslModel>();
 
             StreamWriter logWriter = null;
             if (debugMode)
@@ -81,7 +78,11 @@ namespace RhetosLanguageServer
                 }
                 // Configure & build service host
                 var session = new LanguageServerSession(client, contractResolver);
+                ContainerBuilder builder = BuildContainer(rhetosServerConfiguration, debugMode);
+                builder.RegisterInstance<LanguageServerSession>(session);
+                var container = builder.Build();
                 var host = BuildServiceHost(logWriter, contractResolver, debugMode, container);
+                var a = container.Resolve<DslModel>();
                 var serverHandler = new StreamRpcServerHandler(host,
                     StreamRpcServerHandlerOptions.ConsistentResponseSequence |
                     StreamRpcServerHandlerOptions.SupportsRequestCancellation);
@@ -97,7 +98,7 @@ namespace RhetosLanguageServer
             }
         }
 
-        private static ContainerBuilder BuildContainer(RhetosProjectConfiguration rhetosServerConfiguration)
+        private static ContainerBuilder BuildContainer(RhetosProjectConfiguration rhetosServerConfiguration, bool debugMode)
         {
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterType<DslModel>().SingleInstance();
@@ -105,9 +106,15 @@ namespace RhetosLanguageServer
             builder.RegisterType<InitializaionService>().SingleInstance();
             builder.RegisterType<WorkspaceService>().SingleInstance();
             builder.RegisterType<CompletionItemService>().SingleInstance();
+            builder.RegisterType<RhetosLSP.Utilities.DslParser>().SingleInstance();
             builder.RegisterInstance<RhetosProjectConfiguration>(rhetosServerConfiguration);
             builder.RegisterType<ConceptDescriptionProvider>().SingleInstance();
             MefPluginScanner.FindAndRegisterPlugins<IConceptInfo>(builder, rhetosServerConfiguration.PluginsFolderPath);
+
+            if (debugMode)
+            {
+                builder.RegisterType<VSCodeClientLogProvider>().As<ILogProvider>().InstancePerLifetimeScope();
+            }
             return builder;
         }
 

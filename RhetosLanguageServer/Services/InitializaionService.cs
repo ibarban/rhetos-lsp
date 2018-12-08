@@ -33,9 +33,7 @@ namespace RhetosLanguageServer.Services
         [JsonRpcMethod(IsNotification = true)]
         public async Task Initialized()
         {
-            await Client.Window.ShowMessage(MessageType.Info, "Hello from language server.");
-            var choice = await Client.Window.ShowMessage(MessageType.Warning, "Wanna drink?", "Yes", "No");
-            await Client.Window.ShowMessage(MessageType.Info, $"You chose {(string) choice ?? "Nothing"}.");
+            await Client.Window.ShowMessage(MessageType.Info, "Rhetos language server initialized.");
         }
 
         [JsonRpcMethod]
