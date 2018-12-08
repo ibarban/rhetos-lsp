@@ -19,7 +19,6 @@ namespace RhetosLSPUtilities
         {
             _dslScriptsProvider = dslScriptsProvider;
         }
-
         public List<Token> GetTokens()
         {
             if (_tokens == null)
@@ -28,6 +27,7 @@ namespace RhetosLSPUtilities
                         ParseTokens();
             return _tokens;
         }
+
 
         private void ParseTokens()
         {
@@ -42,19 +42,28 @@ namespace RhetosLSPUtilities
                     TokenizerInternals.SkipWhitespaces(dslScript.Script, ref scriptPosition);
                     if (scriptPosition >= dslScript.Script.Length)
                         break;
-
                     int startPosition = scriptPosition;
-                    Token t = TokenizerInternals.GetNextToken_ValueType(dslScript, ref scriptPosition);
-                    if (scriptPosition < 0)
-                    {
-                        // Current token is invalid
-                        break;
-                    }
-                    t.DslScript = dslScript;
-                    t.PositionInDslScript = startPosition;
 
-                    if (t.Type != TokenType.Comment)
-                        _tokens.Add(t);
+                    try
+                    {
+                        Token token = new Token();
+                        token = TokenizerInternals.GetNextToken_ValueType(dslScript, ref scriptPosition);
+                        if (scriptPosition < 0)
+                        {
+                            // Current token is invalid
+                            break;
+                        }
+                        token.DslScript = dslScript;
+                        token.PositionInDslScript = startPosition;
+
+                        if (token.Type != TokenType.Comment)
+                            _tokens.Add(token);
+                    }
+                    catch (DslSyntaxException ex)
+                    {
+                        //TODO
+                    }
+                    
                 }
 
                 _tokens.Add(new Token { DslScript = dslScript, PositionInDslScript = dslScript.Script.Length, Type = TokenType.EndOfFile, Value = "" });
