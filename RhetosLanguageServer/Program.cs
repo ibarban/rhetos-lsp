@@ -112,7 +112,7 @@ namespace RhetosLanguageServer
 
             if (debugMode)
             {
-                builder.RegisterType<VSCodeLogProvider>().As<ILogProvider>().InstancePerLifetimeScope();
+                builder.RegisterType<VSCodeClientLogProvider>().As<ILogProvider>().InstancePerLifetimeScope();
             }
             return builder;
         }

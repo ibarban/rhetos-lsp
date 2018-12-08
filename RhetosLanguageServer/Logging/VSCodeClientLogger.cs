@@ -4,13 +4,13 @@ using Rhetos.Logging;
 
 namespace RhetosLanguageServer
 {
-    public class VSCodeLogger : ILogger
+    public class VSCodeClientLogger : ILogger
     {
         string _eventName;
 
         LanguageServerSession _session;
 
-        public VSCodeLogger(LanguageServerSession session, string eventName)
+        public VSCodeClientLogger(LanguageServerSession session, string eventName)
         {
             _eventName = eventName;
 

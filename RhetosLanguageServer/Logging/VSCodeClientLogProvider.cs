@@ -8,18 +8,18 @@ using RhetosLanguageServer.Services;
 
 namespace RhetosLanguageServer
 {
-    public class VSCodeLogProvider : ILogProvider
+    public class VSCodeClientLogProvider : ILogProvider
     {
         LanguageServerSession _session;
 
-        public VSCodeLogProvider(LanguageServerSession session)
+        public VSCodeClientLogProvider(LanguageServerSession session)
         {
             _session = session;
         }
 
         public ILogger GetLogger(string eventName)
         {
-            return new VSCodeLogger(_session, eventName);
+            return new VSCodeClientLogger(_session, eventName);
         }
     }
 }
