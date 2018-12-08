@@ -13,14 +13,14 @@ namespace RhetosLanguageServer
 
         private readonly RhetosProjectConfiguration _rhetosProjectConfiguration;
 
-        public List<ConceptInfoDocumentation> ConceptInfoDescriptions { get; private set; }
+        public Dictionary<Type, ConceptInfoDocumentation> ConceptInfoDescriptions { get; private set; }
 
         public ConceptDescriptionProvider(RhetosProjectConfiguration rhetosProjectConfiguration, IEnumerable<IConceptInfo> conceptPrototypes)
         {
             _conceptTypes = conceptPrototypes.Select(conceptInfo => conceptInfo.GetType());
             _rhetosProjectConfiguration = rhetosProjectConfiguration;
 
-            ConceptInfoDescriptions = new List<ConceptInfoDocumentation>();
+            ConceptInfoDescriptions = new Dictionary<Type, ConceptInfoDocumentation> ();
 
             var assemblyDocumentations = _conceptTypes.Select(x => x.Assembly.Location.Replace(".dll", ".xml")).Distinct();
             var conceptTypesInSummary = _conceptTypes.Select(x => x.FullName).ToList();
@@ -38,12 +38,15 @@ namespace RhetosLanguageServer
                         var memberType = splits[0];
                         if (memberType == "T" && conceptTypesInSummary.Contains(splits[1]))
                         {
-                            var summeryContent = member.SelectSingleNode("summary").InnerText;
-                            ConceptInfoDescriptions.Add(new ConceptInfoDocumentation
+                            var type = _conceptTypes.FirstOrDefault(x => x.FullName == splits[1]);
+                            if (type != null)
                             {
-                                ConceptType = Type.GetType(splits[1]),
-                                ConceptSummary = summeryContent.Trim()
-                            });
+                                var summeryContent = member.SelectSingleNode("summary").InnerText;
+                                ConceptInfoDescriptions.Add(type, new ConceptInfoDocumentation
+                                {
+                                    ConceptSummary = summeryContent.Trim()
+                                });
+                            }
                         }
                     }
                 }

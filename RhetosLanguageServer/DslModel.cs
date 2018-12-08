@@ -9,8 +9,6 @@ namespace RhetosLanguageServer
     {
         private readonly IEnumerable<Type> _conceptTypes;
 
-        private readonly List<ConceptInfoDocumentation> _conceptDescriptionProvider;
-
         private List<ConceptInfoMetadata> _conceptsInfoMetadata;
 
         public List<string> ConceptKeywords { get; set; }
@@ -21,15 +19,20 @@ namespace RhetosLanguageServer
             IEnumerable<IConceptInfo> conceptPrototypes, ConceptDescriptionProvider conceptDescriptionProvider)
         {
             _conceptTypes = conceptPrototypes.Select(conceptInfo => conceptInfo.GetType());
-            _conceptDescriptionProvider = conceptDescriptionProvider.ConceptInfoDescriptions;
             ConceptKeywords = _conceptTypes.Select(x => ConceptInfoHelper.GetKeyword(x)).Distinct().ToList();
+            ConceptsInfoMetadata = new List<ConceptInfoMetadata>();
 
-            ConceptsInfoMetadata = _conceptTypes.Select(x => new ConceptInfoMetadata
+            foreach (var conceptType in _conceptTypes)
             {
-                Type = x,
-                Keyword = ConceptInfoHelper.GetKeyword(x),
-                Documentation = conceptDescriptionProvider.ConceptInfoDescriptions.FirstOrDefault(y => y.ConceptType == x)
-            }).ToList();
+                ConceptInfoDocumentation documentation = null;
+                conceptDescriptionProvider.ConceptInfoDescriptions.TryGetValue(conceptType, out documentation);
+                ConceptsInfoMetadata.Add(new ConceptInfoMetadata
+                {
+                    Type = conceptType,
+                    Keyword = ConceptInfoHelper.GetKeyword(conceptType),
+                    Documentation = documentation
+                });
+            }
         }
     }
 
