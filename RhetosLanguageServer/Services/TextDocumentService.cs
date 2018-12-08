@@ -30,7 +30,7 @@ namespace RhetosLanguageServer.Services
         {
             // Note that Hover is cancellable.
             await Task.Delay(1000, ct);
-            return new Hover {Contents = "Test _hover_ @" + position + "\n\n" + textDocument};
+            return new Hover { Contents = "Test _hover_ @" + position + "\n\n" + textDocument };
         }
 
         [JsonRpcMethod]
@@ -51,7 +51,7 @@ namespace RhetosLanguageServer.Services
             doc.DocumentChanged += async (sender, args) =>
             {
                 // Lint the document when it's changed.
-                var doc1 = ((SessionDocument) sender).Document;
+                var doc1 = ((SessionDocument)sender).Document;
                 var diag1 = session.DiagnosticProvider.LintDocument(doc1, session.Settings.MaxNumberOfProblems);
                 if (session.Documents.ContainsKey(doc1.Uri))
                 {
@@ -110,15 +110,15 @@ namespace RhetosLanguageServer.Services
             var content = doc.Document.Content;
             var tokens = ContentTokenizer.TokenizeContent(content);
 
-            /* if (IsCurrentPositionAKeyword(tokens, GetPositionInString(content, position)))
-             {*/
-            var a = _dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary });
+            if (IsCurrentPositionAKeyword(content, GetPositionInString(content, position)))
+            {
+                var a = _dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary });
                 return new CompletionList(_dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary }));
-            /*}
+            }
             else
             {
                 return new CompletionList();
-            }*/
+            }
         }
 
         public int GetPositionInString(string content, Position position)
@@ -137,33 +137,25 @@ namespace RhetosLanguageServer.Services
                 return lineIndex + position.Character;
         }
 
-        public bool IsCurrentPositionAKeyword(List<Token> tokens, int position)
+        public bool IsCurrentPositionAKeyword(string content, int position)
         {
-            if (tokens.Count <= 2)
-                return true;
-
-            var curentTokenIndex = -1;
-            for (int i = tokens.Count - 1; i >= 0; i--)
+            char[] specialChars = { ';', '}', '{' };
+            char[] charactersToIgnore = { '\n', ' ', '\r' };
+            var contentAsCharArray = content.ToCharArray();
+            
+            for (int i = position; i > 0; i--)
             {
-                var token = tokens[i];
-                if (token.PositionInDslScript <= position)
-                {
-                    curentTokenIndex = i;
-                    break;
-                }
+                var currentChar = contentAsCharArray[i];
+
+                if (charactersToIgnore.Contains(currentChar))
+                    continue;
+                if (!charactersToIgnore.Contains(currentChar) && !specialChars.Contains(currentChar)) //Regular word found
+                    return false;
+                if (specialChars.Contains(currentChar))
+                    return true;
             }
 
-            if (curentTokenIndex < 1)
-                return false;
-
-            var tokenBeforeIndex = curentTokenIndex - 1;
-
-            if (tokens[tokenBeforeIndex].Type == TokenType.Special &&
-                position <= tokens[curentTokenIndex].PositionInDslScript + tokens[curentTokenIndex].Value.Length)
-                return true;
-            else
-                return false;
-
+            return false;
         }
     }
 }
