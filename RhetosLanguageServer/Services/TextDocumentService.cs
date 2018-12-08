@@ -10,6 +10,7 @@ using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 using Rhetos.Dsl;
+using Rhetos.Logging;
 
 namespace RhetosLanguageServer.Services
 {
@@ -20,9 +21,12 @@ namespace RhetosLanguageServer.Services
 
         private readonly DslModel _dslModel;
 
-        public TextDocumentService(DslModel dslModel)
+        ILogger _tokenLogger;
+
+        public TextDocumentService(ILogProvider logProvider, DslModel dslModel)
         {
             _dslModel = dslModel;
+            _tokenLogger = logProvider.GetLogger("Token parser");
         }
 
         [JsonRpcMethod]

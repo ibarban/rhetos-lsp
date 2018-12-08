@@ -274,6 +274,8 @@
     <Compile Include="DiagnosticProvider.cs" />
     <Compile Include="DslModel.cs" />
     <Compile Include="LanguageServerSession.cs" />
+    <Compile Include="Logging\VSCodeClientLogger.cs" />
+    <Compile Include="Logging\VSCodeClientLogProvider.cs" />
     <Compile Include="Models\ConceptInfoDocumentation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
