@@ -39,11 +39,21 @@ namespace RhetosLanguageServer.Services
         [JsonRpcMethod]
         public async Task<Hover> Hover(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
         {
-            // Note that Hover is cancellable.
-            await Task.Delay(1000, ct);
-            return new Hover { Contents = "Test _hover_ @" + position + "\n\n" + textDocument };
-        }
+            var doc = Session.Documents[textDocument.Uri];
+            var content = doc.Document.Content;
+            string wordOverHover = ReadWordOverHover(content, GetPositionInString(content, position));
 
+            await Task.Delay(500, ct);
+
+            var foundConcept = _dslModel.ConceptsInfoMetadata.FirstOrDefault(cim => cim.Keyword == wordOverHover);
+            if (foundConcept != null && foundConcept.Documentation != null)
+            {
+                return new Hover { Contents = foundConcept.Documentation.ConceptSummary};
+            }
+
+            return new Hover { Contents = wordOverHover};
+        }
+        
         [JsonRpcMethod]
         public SignatureHelp SignatureHelp(TextDocumentIdentifier textDocument, Position position)
         {
@@ -168,6 +178,38 @@ namespace RhetosLanguageServer.Services
             }
 
             return false;
+        }
+        private string ReadWordOverHover(string content, int position)
+        {
+            char[] stopCharacters = { '\n', ' ', '\r', ';' };
+            var contentAsCharArray = content.ToCharArray();
+            int startPosition = 0;
+            int endPosition = 0;
+            
+            for (int i = position; i >= 0; i--)
+            {
+                var currentChar = contentAsCharArray[i];
+                if (stopCharacters.Contains(currentChar))
+                {
+                    startPosition = i;
+                    break;
+                }
+            }
+
+            for (int i = startPosition + 1; i < content.Length; i++)
+            {
+                var currentChar = contentAsCharArray[i];
+                if (stopCharacters.Contains(currentChar))
+                {
+                    endPosition = i;
+                    break;
+                }
+            }
+            startPosition = startPosition == 0 ? 0 : startPosition + 1;
+
+            string foundWord = new string(contentAsCharArray, startPosition, (endPosition - startPosition)); 
+
+            return foundWord;
         }
     }
 }
