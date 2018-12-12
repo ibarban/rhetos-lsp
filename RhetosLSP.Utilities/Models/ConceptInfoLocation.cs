@@ -9,14 +9,16 @@ namespace RhetosLSP.Utilities.Models
         public string Path { get; set; }
         public int Line { get; set; }
         public int Column { get; set; }
+        public int Position { get; set; }
 
         public ConceptInfoLocation() { }
-        public ConceptInfoLocation(string script, int line, int column, string path = null)
+        public ConceptInfoLocation(string script, int line, int column, int position, string path = null)
         {
             Script = script;
             Path = path;
             Line = line;
             Column = column;
+            Position = position;
         }
 
         public string ReportLocation()

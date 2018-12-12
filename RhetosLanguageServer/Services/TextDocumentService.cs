@@ -16,6 +16,7 @@ using Token = Rhetos.Dsl.Token;
 using TokenType = Rhetos.Dsl.TokenType;
 using DslParser = RhetosLSP.Utilities.DslParser;
 using RhetosLSP.Utilities.Models;
+using RhetosLSP.Utilities;
 
 namespace RhetosLanguageServer.Services
 {
@@ -134,10 +135,18 @@ namespace RhetosLanguageServer.Services
             var content = doc.Document.Content;
             var tokens = ContentTokenizer.TokenizeContent(content, doc.Document.Uri);
             _currentScriptConcepts = _dslParser.Parse(tokens);
-            if (IsCurrentPositionAKeyword(content, GetPositionInString(content, position)))
+            var positionInString = GetPositionInString(content, position);
+            var tokenStartContextIndex = TokenHelper.GetTokenIndexOfStartContext(tokens, positionInString);
+            var someTokenIndex = TokenHelper.FindFirstStartContextBefore(tokens, tokenStartContextIndex);
+
+            if (someTokenIndex != -1)
             {
-                var a = _dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.Documentation?.ConceptSummary });
-            
+                var positionInScript = tokens[someTokenIndex].PositionInDslScript;
+                var parentConcept = _currentScriptConcepts.FirstOrDefault(x => x.Location.Position == positionInScript);
+            }
+
+            if (IsCurrentPositionAKeyword(content, positionInString))
+            {
                 return new CompletionList(_dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.GetUserDescription(false) }));
             }
             else

@@ -144,7 +144,7 @@ namespace RhetosLSP.Utilities
                 position = 0;
             }
             var text = dslScript.Script;
-            return new ConceptInfoLocation(text, ScriptPositionReporting.Line(text, position), ScriptPositionReporting.Column(text, position), dslScript.Path);
+            return new ConceptInfoLocation(text, ScriptPositionReporting.Line(text, position), ScriptPositionReporting.Column(text, position), position, dslScript.Path);
         }
     }
 }
