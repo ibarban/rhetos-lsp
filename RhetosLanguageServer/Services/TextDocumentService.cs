@@ -25,7 +25,7 @@ namespace RhetosLanguageServer.Services
     {
         private static List<string> Keywords = new List<string>();
 
-        private readonly DslModel _dslModel;
+        private readonly RhetosLSP.Dsl.DslModel _dslModel;
 
         ILogger _parsingLogger;
 
@@ -33,7 +33,7 @@ namespace RhetosLanguageServer.Services
 
         private List<ConceptInfoLSP> _currentScriptConcepts = new List<ConceptInfoLSP>();
 
-        public TextDocumentService(ILogProvider logProvider, DslModel dslModel, DslParser dslParser)
+        public TextDocumentService(ILogProvider logProvider, RhetosLSP.Dsl.DslModel dslModel, DslParser dslParser)
         {
             _dslModel = dslModel;
             _parsingLogger = logProvider.GetLogger("TextDocumentService");

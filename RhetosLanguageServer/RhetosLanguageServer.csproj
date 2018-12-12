@@ -96,15 +96,6 @@
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.4\lib\net45\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Core, Version=2.8.50926.602, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\NuGet.Core.2.8.3\lib\net40-Client\NuGet.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.12.1.24160719\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-    </Reference>
     <Reference Include="Rhetos, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.dll</HintPath>
     </Reference>
@@ -272,11 +263,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiagnosticProvider.cs" />
-    <Compile Include="DslModel.cs" />
     <Compile Include="LanguageServerSession.cs" />
     <Compile Include="Logging\VSCodeClientLogger.cs" />
     <Compile Include="Logging\VSCodeClientLogProvider.cs" />
-    <Compile Include="Models\ConceptInfoDocumentation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RhetosProjectConfiguration.cs" />
@@ -287,10 +276,6 @@
     <Compile Include="Services\TextDocumentService.cs" />
     <Compile Include="Services\WorkspaceService.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Utilities\ConceptDescriptionProvider.cs" />
-    <Compile Include="Utilities\MefPluginScanner.cs" />
-    <Compile Include="Utilities\PluginInfo.cs" />
-    <Compile Include="Utilities\ContentTokenizer.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -305,6 +290,10 @@
     <ProjectReference Include="..\RhetosLSP.Dsl\RhetosLSP.Dsl.csproj">
       <Project>{d0bee72c-2fd4-4c82-a29d-ed5f4fb8a516}</Project>
       <Name>RhetosLSP.Dsl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RhetosLSP.Extensibility\RhetosLSP.Extensibility.csproj">
+      <Project>{80e972b5-39a6-4881-a58b-0f694119c37f}</Project>
+      <Name>RhetosLSP.Extensibility</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

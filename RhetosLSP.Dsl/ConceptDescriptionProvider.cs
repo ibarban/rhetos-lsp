@@ -5,17 +5,17 @@ using System.Linq;
 using System.IO;
 using System.Xml;
 
-namespace RhetosLanguageServer
+namespace RhetosLSP.Dsl
 {
     public class ConceptDescriptionProvider
     {
         private readonly IEnumerable<Type> _conceptTypes;
 
-        private readonly RhetosProjectConfiguration _rhetosProjectConfiguration;
+        private readonly IPluginFolderProvider _rhetosProjectConfiguration;
 
         public Dictionary<Type, ConceptInfoDocumentation> ConceptInfoDescriptions { get; private set; }
 
-        public ConceptDescriptionProvider(RhetosProjectConfiguration rhetosProjectConfiguration, IEnumerable<IConceptInfo> conceptPrototypes)
+        public ConceptDescriptionProvider(IPluginFolderProvider rhetosProjectConfiguration, IEnumerable<IConceptInfo> conceptPrototypes)
         {
             _conceptTypes = conceptPrototypes.Select(conceptInfo => conceptInfo.GetType());
             _rhetosProjectConfiguration = rhetosProjectConfiguration;

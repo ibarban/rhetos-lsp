@@ -1,12 +1,10 @@
 ﻿// #define WAIT_FOR_DEBUGGER
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
@@ -15,14 +13,11 @@ using LanguageServer.VsCode;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 using Autofac;
-using Rhetos.Extensibility;
 using Rhetos.Dsl;
-using Rhetos.Utilities;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.ReflectionModel;
-using System.ComponentModel.Composition;
 using RhetosLanguageServer.Services;
 using Rhetos.Logging;
+using RhetosLSP.Extensibility;
+using RhetosLSP.Dsl;
 
 namespace RhetosLanguageServer
 {
@@ -82,7 +77,6 @@ namespace RhetosLanguageServer
                 builder.RegisterInstance<LanguageServerSession>(session);
                 var container = builder.Build();
                 var host = BuildServiceHost(logWriter, contractResolver, debugMode, container);
-                var a = container.Resolve<DslModel>();
                 var serverHandler = new StreamRpcServerHandler(host,
                     StreamRpcServerHandlerOptions.ConsistentResponseSequence |
                     StreamRpcServerHandlerOptions.SupportsRequestCancellation);
@@ -101,13 +95,14 @@ namespace RhetosLanguageServer
         private static ContainerBuilder BuildContainer(RhetosProjectConfiguration rhetosServerConfiguration, bool debugMode)
         {
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterType<DslModel>().SingleInstance();
+            builder.RegisterType<RhetosLSP.Dsl.DslModel>().SingleInstance();
             builder.RegisterType<TextDocumentService>().SingleInstance();
             builder.RegisterType<InitializaionService>().SingleInstance();
             builder.RegisterType<WorkspaceService>().SingleInstance();
             builder.RegisterType<CompletionItemService>().SingleInstance();
             builder.RegisterType<RhetosLSP.Dsl.DslParser>().SingleInstance();
             builder.RegisterInstance<RhetosProjectConfiguration>(rhetosServerConfiguration);
+            builder.RegisterInstance<IPluginFolderProvider>(rhetosServerConfiguration);
             builder.RegisterType<ConceptDescriptionProvider>().SingleInstance();
             MefPluginScanner.FindAndRegisterPlugins<IConceptInfo>(builder, rhetosServerConfiguration.PluginsFolderPath);
 

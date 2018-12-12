@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RhetosLanguageServer
+namespace RhetosLSP.Dsl
 {
     public class DslModel
     {

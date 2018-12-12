@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Rhetos.Extensibility;
-using Rhetos.Logging;
 using Rhetos.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,12 +9,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using Autofac;
 
-namespace RhetosLanguageServer
+namespace RhetosLSP.Extensibility
 {
-    internal static class MefPluginScanner
+    public static class MefPluginScanner
     {
         /// <summary>
         /// The key is FullName of the plugin's export type (it is usually the interface it implements).

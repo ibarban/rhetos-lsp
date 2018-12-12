@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RhetosLanguageServer
+namespace RhetosLSP.Dsl
 {
     public static class ContentTokenizer
     {

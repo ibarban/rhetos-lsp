@@ -1,6 +1,8 @@
-﻿namespace RhetosLanguageServer
+﻿using RhetosLSP.Dsl;
+
+namespace RhetosLanguageServer
 {
-    public class RhetosProjectConfiguration
+    public class RhetosProjectConfiguration : IPluginFolderProvider
     {
         public string RhetosServerPath { get; private set; }
 

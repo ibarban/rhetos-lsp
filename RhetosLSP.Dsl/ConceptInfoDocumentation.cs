@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RhetosLanguageServer
+namespace RhetosLSP.Dsl
 {
     public class ConceptInfoDocumentation
     {
