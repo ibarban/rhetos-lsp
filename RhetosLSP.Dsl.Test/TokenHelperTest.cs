@@ -2,8 +2,9 @@
 using Rhetos.Dsl;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using RhetosLSP.Dsl;
 
-namespace RhetosLSP.Utilities.Test
+namespace RhetosLSP.Dsl.Test
 {
     [TestClass]
     public class TokenHelperTest

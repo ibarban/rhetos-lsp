@@ -1,7 +1,7 @@
 ﻿using Rhetos.Dsl;
 using System.Collections.Generic;
 
-namespace RhetosLSP.Utilities
+namespace RhetosLSP.Dsl
 {
     public static class TokenHelper
     {

@@ -1,12 +1,12 @@
 ﻿using Rhetos.Dsl;
 using Rhetos.Utilities;
-using RhetosLSP.Utilities.Models;
+using RhetosLSP.Dsl.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RhetosLSP.Utilities
+namespace RhetosLSP.Dsl
 {
     public class DslParser
     {

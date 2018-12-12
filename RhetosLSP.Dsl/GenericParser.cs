@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 using Rhetos.Utilities;
 using Rhetos.Dsl;
 
-namespace RhetosLSP.Utilities
+namespace RhetosLSP.Dsl
 {
     public class GenericParser : IConceptParser
     {

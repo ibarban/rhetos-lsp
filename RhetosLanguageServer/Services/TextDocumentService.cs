@@ -14,9 +14,9 @@ using Rhetos.Logging;
 
 using Token = Rhetos.Dsl.Token;
 using TokenType = Rhetos.Dsl.TokenType;
-using DslParser = RhetosLSP.Utilities.DslParser;
-using RhetosLSP.Utilities.Models;
-using RhetosLSP.Utilities;
+using DslParser = RhetosLSP.Dsl.DslParser;
+using RhetosLSP.Dsl.Models;
+using RhetosLSP.Dsl;
 
 namespace RhetosLanguageServer.Services
 {

@@ -23,9 +23,9 @@ using System.Linq;
 using System.Globalization;
 using Rhetos.Utilities;
 using Rhetos.Dsl;
-using RhetosLSP.Utilities.Models;
+using RhetosLSP.Dsl.Models;
 
-namespace RhetosLSP.Utilities
+namespace RhetosLSP.Dsl
 {
     public class TokenReader : ITokenReader
     {

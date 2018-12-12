@@ -180,9 +180,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RhetosLSP.Utilities\RhetosLSP.Utilities.csproj">
+    <ProjectReference Include="..\RhetosLSP.Dsl\RhetosLSP.Dsl.csproj">
       <Project>{d0bee72c-2fd4-4c82-a29d-ed5f4fb8a516}</Project>
-      <Name>RhetosLSP.Utilities</Name>
+      <Name>RhetosLSP.Dsl</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

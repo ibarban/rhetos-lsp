@@ -106,7 +106,7 @@ namespace RhetosLanguageServer
             builder.RegisterType<InitializaionService>().SingleInstance();
             builder.RegisterType<WorkspaceService>().SingleInstance();
             builder.RegisterType<CompletionItemService>().SingleInstance();
-            builder.RegisterType<RhetosLSP.Utilities.DslParser>().SingleInstance();
+            builder.RegisterType<RhetosLSP.Dsl.DslParser>().SingleInstance();
             builder.RegisterInstance<RhetosProjectConfiguration>(rhetosServerConfiguration);
             builder.RegisterType<ConceptDescriptionProvider>().SingleInstance();
             MefPluginScanner.FindAndRegisterPlugins<IConceptInfo>(builder, rhetosServerConfiguration.PluginsFolderPath);

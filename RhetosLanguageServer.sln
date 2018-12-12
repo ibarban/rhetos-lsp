@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer.VsCode", "La
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLanguageServer", "RhetosLanguageServer\RhetosLanguageServer.csproj", "{8D290072-8C41-48D3-B7F0-B1401335BB4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLSP.Utilities", "RhetosLSP.Utilities\RhetosLSP.Utilities.csproj", "{D0BEE72C-2FD4-4C82-A29D-ED5F4FB8A516}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLSP.Dsl", "RhetosLSP.Dsl\RhetosLSP.Dsl.csproj", "{D0BEE72C-2FD4-4C82-A29D-ED5F4FB8A516}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLSP.Utilities.Test", "RhetosLSP.Utilities.Test\RhetosLSP.Utilities.Test.csproj", "{57E9BE52-D0A3-491D-9F3F-4AC776D0541C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLSP.Dsl.Test", "RhetosLSP.Dsl.Test\RhetosLSP.Dsl.Test.csproj", "{57E9BE52-D0A3-491D-9F3F-4AC776D0541C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
