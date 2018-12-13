@@ -5,32 +5,6 @@ using System.Linq;
 
 namespace RhetosLSP.Dsl
 {
-    public class DslModel
-    {
-        private readonly IEnumerable<Type> _conceptTypes;
-
-        public List<string> ConceptKeywords { get; set; }
-
-        public List<ConceptInfoMetadata> ConceptsInfoMetadata { get; private set;}
-
-        public DslModel(
-            IEnumerable<IConceptInfo> conceptPrototypes, ConceptDescriptionProvider conceptDescriptionProvider)
-        {
-            _conceptTypes = conceptPrototypes.Select(conceptInfo => conceptInfo.GetType());
-            ConceptKeywords = _conceptTypes.Select(x => ConceptInfoHelper.GetKeyword(x)).Distinct().ToList();
-            ConceptsInfoMetadata = new List<ConceptInfoMetadata>();
-
-            foreach (var conceptType in _conceptTypes)
-            {
-
-                var members = ConceptMembers.Get(conceptType);
-                ConceptInfoDocumentation documentation = null;
-                conceptDescriptionProvider.ConceptInfoDescriptions.TryGetValue(conceptType, out documentation);
-                ConceptsInfoMetadata.Add(new ConceptInfoMetadata( conceptType, documentation));
-            }
-        }
-    }
-
     public class ConceptInfoMetadata
     {
         public Type Type { get; private set; }
@@ -69,7 +43,8 @@ namespace RhetosLSP.Dsl
                     else
                         propertyDescriptions.Add(keywordOrType + " " + memeber.Name);
                 }
-                else {
+                else
+                {
                     if (memeber.IsKey)
                         propertyDescriptions.Add("Key " + " " + memeber.ValueType.Name + " " + memeber.Name);
                     else

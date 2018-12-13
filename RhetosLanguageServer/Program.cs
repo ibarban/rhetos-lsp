@@ -95,13 +95,14 @@ namespace RhetosLanguageServer
         private static ContainerBuilder BuildContainer(RhetosProjectConfiguration rhetosServerConfiguration, bool debugMode)
         {
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterType<RhetosLSP.Dsl.DslModel>().SingleInstance();
+            builder.RegisterType<RhetosLSP.Dsl.ConceptsInfoMetadata>().SingleInstance();
             builder.RegisterType<TextDocumentService>().SingleInstance();
             builder.RegisterType<InitializaionService>().SingleInstance();
             builder.RegisterType<WorkspaceService>().SingleInstance();
             builder.RegisterType<CompletionItemService>().SingleInstance();
             builder.RegisterType<RhetosLSP.Dsl.DslParser>().SingleInstance();
             builder.RegisterType<ParsedDslScriptProvider>().As<IParsedDslScriptProvider>().SingleInstance();
+            builder.RegisterType<ConceptsInfoMetadata>().As<IConceptsInfoMetadata>().SingleInstance();
             builder.RegisterInstance<RhetosProjectConfiguration>(rhetosServerConfiguration);
             builder.RegisterInstance<IPluginFolderProvider>(rhetosServerConfiguration);
             builder.RegisterType<ConceptDescriptionProvider>().SingleInstance();

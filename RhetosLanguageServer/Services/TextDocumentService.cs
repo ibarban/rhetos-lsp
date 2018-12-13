@@ -1,19 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Server;
 using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts;
-using LanguageServer.VsCode.Server;
 using Rhetos.Logging;
-
-using Token = Rhetos.Dsl.Token;
-using TokenType = Rhetos.Dsl.TokenType;
-using DslParser = RhetosLSP.Dsl.DslParser;
 using RhetosLSP.Dsl;
 
 namespace RhetosLanguageServer.Services
@@ -21,21 +13,17 @@ namespace RhetosLanguageServer.Services
     [JsonRpcScope(MethodPrefix = "textDocument/")]
     public class TextDocumentService : RhetosLanguageServiceBase
     {
-        private static List<string> Keywords = new List<string>();
-
-        private readonly DslModel _dslModel;
+        private readonly IConceptsInfoMetadata _conceptsInfoMetadata;
 
         private readonly IParsedDslScriptProvider _parsedDslScriptProvider;
 
-        ILogger _parsingLogger;
+        private readonly ILogger _parsingLogger;
 
         private readonly DslParser _dslParser;
 
-        private List<ConceptInfoLSP> _currentScriptConcepts = new List<ConceptInfoLSP>();
-
-        public TextDocumentService(ILogProvider logProvider, DslModel dslModel, DslParser dslParser, IParsedDslScriptProvider parsedDslScriptProvider)
+        public TextDocumentService(ILogProvider logProvider, IConceptsInfoMetadata conceptsInfoMetadata, DslParser dslParser, IParsedDslScriptProvider parsedDslScriptProvider)
         {
-            _dslModel = dslModel;
+            _conceptsInfoMetadata = conceptsInfoMetadata;
             _parsingLogger = logProvider.GetLogger("TextDocumentService");
             _dslParser = dslParser;
             _parsedDslScriptProvider = parsedDslScriptProvider;
@@ -48,7 +36,7 @@ namespace RhetosLanguageServer.Services
 
             await Task.Delay(500, ct);
 
-            var foundConcept = _dslModel.ConceptsInfoMetadata.FirstOrDefault(cim => cim.Keyword == wordOverHover);
+            var foundConcept = _conceptsInfoMetadata.Metadata.FirstOrDefault(cim => cim.Keyword == wordOverHover);
             if (foundConcept != null && foundConcept.Documentation != null)
             {
                 return new Hover { Contents = foundConcept.Documentation.ConceptSummary};
@@ -119,7 +107,7 @@ namespace RhetosLanguageServer.Services
         {
             var parsedScript = _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri);
             if (parsedScript.IsKeywordAtPosition(position.Line, position.Character))
-                return new CompletionList(_dslModel.ConceptsInfoMetadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.GetUserDescription(false) }));
+                return new CompletionList(_conceptsInfoMetadata.Metadata.Where(x => !string.IsNullOrEmpty(x.Keyword)).Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.GetUserDescription(false) }));
             else
                 return new CompletionList();
         }
