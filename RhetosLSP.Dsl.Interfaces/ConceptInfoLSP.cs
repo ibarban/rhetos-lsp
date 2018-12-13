@@ -1,6 +1,6 @@
 ﻿using Rhetos.Dsl;
 
-namespace RhetosLSP.Dsl.Models
+namespace RhetosLSP.Dsl
 {
     public class ConceptInfoLSP
     {

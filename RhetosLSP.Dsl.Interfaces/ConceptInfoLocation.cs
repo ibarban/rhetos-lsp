@@ -1,7 +1,7 @@
 ﻿using Rhetos.Utilities;
 using System.Globalization;
 
-namespace RhetosLSP.Dsl.Models
+namespace RhetosLSP.Dsl
 {
     public class ConceptInfoLocation
     {

@@ -6,8 +6,10 @@ namespace RhetosLSP.Dsl
 {
     public interface IParsedDslScript
     {
-        IEnumerable<IConceptInfo> ParsedConcepts { get; }
+        IEnumerable<ConceptInfoLSP> ParsedConcepts { get; }
 
-        bool IsKeywordAtPosition(int positionInScript);
+        bool IsKeywordAtPosition(int line, int column);
+
+        string GetWordOnPosition(int line, int column);
     }
 }

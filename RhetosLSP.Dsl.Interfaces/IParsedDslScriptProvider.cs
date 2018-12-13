@@ -1,16 +1,11 @@
-﻿using Rhetos.Dsl;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace RhetosLSP.Dsl
 {
     public interface IParsedDslScriptProvider
     {
-        IParsedDslScript GetScriptOnPath(string path);
+        IParsedDslScript GetScriptOnPath(Uri path);
 
-        void UpdateScript(string path, string script);
+        void UpdateScript(Uri path, string script);
     }
 }

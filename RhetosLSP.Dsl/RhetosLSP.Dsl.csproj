@@ -58,8 +58,6 @@
     <Compile Include="DslParser.cs" />
     <Compile Include="GenericParser.cs" />
     <Compile Include="IPluginFolderProvider.cs" />
-    <Compile Include="Models\ConceptInfoLocation.cs" />
-    <Compile Include="Models\ConceptInfoLSP.cs" />
     <Compile Include="ParsedDslScript.cs" />
     <Compile Include="ParsedDslScriptProvider.cs" />
     <Compile Include="TokenHelper.cs" />

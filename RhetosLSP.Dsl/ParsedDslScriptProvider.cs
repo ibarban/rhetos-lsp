@@ -8,14 +8,32 @@ namespace RhetosLSP.Dsl
 {
     public class ParsedDslScriptProvider : IParsedDslScriptProvider
     {
-        public IParsedDslScript GetScriptOnPath(string path)
+        private readonly DslParser _dslParser;
+
+        Dictionary<Uri, ParsedDslScript> _parsedScripts;
+
+        public ParsedDslScriptProvider(DslParser dslParser)
         {
-            throw new NotImplementedException();
+            _dslParser = dslParser;
+            _parsedScripts = new Dictionary<Uri, ParsedDslScript>();
         }
 
-        public void UpdateScript(string path, string script)
+        public IParsedDslScript GetScriptOnPath(Uri path)
         {
-            throw new NotImplementedException();
+            ParsedDslScript parsedScript = null;
+            _parsedScripts.TryGetValue(path, out parsedScript);
+            return parsedScript;
+        }
+
+        public void UpdateScript(Uri path, string script)
+        {
+            if (_parsedScripts.ContainsKey(path))
+            {
+                _parsedScripts[path] = new ParsedDslScript(script, path, _dslParser);
+            }
+            else {
+                _parsedScripts.Add(path, new ParsedDslScript(script, path, _dslParser));
+            }
         }
     }
 }
