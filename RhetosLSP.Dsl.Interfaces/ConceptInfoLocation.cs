@@ -1,5 +1,5 @@
-﻿using Rhetos.Utilities;
-using System.Globalization;
+﻿using System.Globalization;
+using Rhetos.Utilities;
 
 namespace RhetosLSP.Dsl
 {

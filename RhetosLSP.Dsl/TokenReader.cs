@@ -23,7 +23,6 @@ using System.Linq;
 using System.Globalization;
 using Rhetos.Utilities;
 using Rhetos.Dsl;
-using RhetosLSP.Dsl.Models;
 
 namespace RhetosLSP.Dsl
 {

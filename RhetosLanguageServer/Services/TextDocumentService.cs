@@ -84,6 +84,7 @@ namespace RhetosLanguageServer.Services
                 }
             };
             Session.Documents.TryAdd(textDocument.Uri, doc);
+            _parsedDslScriptProvider.UpdateScript(textDocument.Uri, Session.Documents[textDocument.Uri].Document.Content);
             var diag = Session.DiagnosticProvider.LintDocument(doc.Document, Session.Settings.MaxNumberOfProblems);
             await Client.Document.PublishDiagnostics(textDocument.Uri, diag);
         }

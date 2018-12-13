@@ -39,7 +39,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Dsl.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Utilities, Version=2.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Rhetos.Utilities, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Utilities.dll</HintPath>
     </Reference>
