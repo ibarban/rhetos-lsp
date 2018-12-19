@@ -11,7 +11,9 @@ namespace RhetosLSP.Dsl
         public int Column { get; set; }
         public int Position { get; set; }
 
-        public ConceptInfoLocation() { }
+        public ConceptInfoLocation() {
+            Position = -1;
+        }
         public ConceptInfoLocation(string script, int line, int column, int position, string path = null)
         {
             Script = script;

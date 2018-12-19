@@ -52,6 +52,7 @@
     <Compile Include="IConceptsInfoMetadata.cs" />
     <Compile Include="IParsedDslScript.cs" />
     <Compile Include="IParsedDslScriptProvider.cs" />
+    <Compile Include="ParsedResults.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

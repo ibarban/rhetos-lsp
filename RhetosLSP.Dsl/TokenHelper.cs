@@ -7,12 +7,12 @@ namespace RhetosLSP.Dsl
     {
         public static int FindFirstStartContextBefore(List<Token> tokens, int tokenIndex)
         {
-            for (var i = tokenIndex - 1; i >= 0; tokenIndex--)
+            for (var i = tokenIndex - 1; i >= 0; i--)
             {
-                if (tokens[tokenIndex].Type == TokenType.Special && tokens[tokenIndex].Value == "{")
-                    return i;
+                if (tokens[i].Type == TokenType.Special && tokens[i].Value == "{")
+                    return i + 1;
             }
-            return -1;
+            return 0;
         }
 
         public static int GetFirstTokenAfter(List<Token> tokens, int positionInScript)

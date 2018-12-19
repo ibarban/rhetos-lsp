@@ -11,6 +11,8 @@ namespace RhetosLSP.Dsl
     {
         public IEnumerable<ConceptInfoLSP> ParsedConcepts { get; private set; }
 
+        private ParsedResults _parsedResults;
+
         private readonly string _script;
 
         private List<Token> _tokens;
@@ -19,7 +21,8 @@ namespace RhetosLSP.Dsl
         {
             _script = script;
             _tokens = ContentTokenizer.TokenizeContent(script, scriptUri);
-            ParsedConcepts = dslParser.Parse(_tokens);
+            _parsedResults = dslParser.Parse(_tokens);
+            ParsedConcepts = _parsedResults.Concepts;
         }
 
         public bool IsKeywordAtPosition(int line, int column)
@@ -47,6 +50,19 @@ namespace RhetosLSP.Dsl
         public string GetWordOnPosition(int line, int column)
         {
             return ReadWordOverHover(_script, GetPosition(line, column));
+        }
+
+        public IConceptInfo GetConceptAtPosition(int line, int column)
+        {
+            var tokenContextEnd = TokenHelper.GetTokenIndexOfStartContext(_tokens, GetPosition(line, column));
+            var tokenContextStart = TokenHelper.FindFirstStartContextBefore(_tokens, tokenContextEnd);
+            var tokenContextStartPosition = _tokens[tokenContextStart].PositionInDslScript;
+            foreach (var parsedConcept in ParsedConcepts)
+            {
+                if (parsedConcept.Location.Position == tokenContextStartPosition)
+                    return parsedConcept.Concept;
+            }
+            return null;
         }
 
         private int GetPosition(int line, int column)

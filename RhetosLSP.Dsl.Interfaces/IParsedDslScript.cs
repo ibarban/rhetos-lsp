@@ -11,5 +11,7 @@ namespace RhetosLSP.Dsl
         bool IsKeywordAtPosition(int line, int column);
 
         string GetWordOnPosition(int line, int column);
+
+        IConceptInfo GetConceptAtPosition(int line, int column);
     }
 }
