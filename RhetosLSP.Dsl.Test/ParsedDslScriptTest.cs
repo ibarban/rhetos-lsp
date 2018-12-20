@@ -50,7 +50,7 @@ namespace RhetosLSP.Dsl.Test
     Sc
 }");
 
-            Assert.AreEqual("SimpleConcept TestConcept", parsedDslScript.GetConceptAtPosition(2, 6).GetKey());
+            Assert.AreEqual("SimpleConcept TestConcept", parsedDslScript.GetContextAtPositionAsync(2, 6).Result.GetKey());
         }
 
         [TestMethod]
@@ -61,7 +61,7 @@ namespace RhetosLSP.Dsl.Test
     SC T2 { SCC T}
 }");
 
-            Assert.AreEqual("SimpleChildConcept T1.T2", parsedDslScript.GetConceptAtPosition(1, 17).GetKey());
+            Assert.AreEqual("SimpleChildConcept T1.T2", parsedDslScript.GetContextAtPositionAsync(1, 17).Result.GetKey());
         }
 
         [TestMethod]
@@ -73,7 +73,7 @@ namespace RhetosLSP.Dsl.Test
     SC T3
 }");
 
-            Assert.AreEqual("SimpleConcept T1", parsedDslScript.GetConceptAtPosition(2, 8).GetKey());
+            Assert.AreEqual("SimpleConcept T1", parsedDslScript.GetContextAtPositionAsync(2, 8).Result.GetKey());
         }
 
         [TestMethod]
@@ -82,7 +82,7 @@ namespace RhetosLSP.Dsl.Test
             var parsedDslScript = GenerateParsedDslScript(
                 @"TestKey");
 
-            Assert.AreEqual(true, parsedDslScript.IsKeywordAtPosition(0, 6));
+            Assert.AreEqual(true, parsedDslScript.IsKeywordAtPositionAsync(0, 6).Result);
         }
 
         [TestMethod]
@@ -93,7 +93,7 @@ namespace RhetosLSP.Dsl.Test
     SC
 }");
 
-            Assert.AreEqual(true, parsedDslScript.IsKeywordAtPosition(1, 6));
+            Assert.AreEqual(true, parsedDslScript.IsKeywordAtPositionAsync(1, 6).Result);
         }
     }
 }

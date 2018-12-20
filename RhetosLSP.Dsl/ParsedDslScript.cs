@@ -9,7 +9,7 @@ namespace RhetosLSP.Dsl
 {
     public class ParsedDslScript : IParsedDslScript
     {
-        public IEnumerable<ConceptInfoLSP> ParsedConcepts { get; private set; }
+        private IEnumerable<ConceptInfoLSP> ParsedConcepts { get; set; }
 
         private ParsedResults _parsedResults;
 
@@ -17,34 +17,67 @@ namespace RhetosLSP.Dsl
 
         private List<Token> _tokens;
 
+        private Task _parsingScriptTask;
+
         public ParsedDslScript(string script, Uri scriptUri, DslParser dslParser)
         {
             _script = script;
-            _tokens = ContentTokenizer.TokenizeContent(script, scriptUri);
-            _parsedResults = dslParser.Parse(_tokens);
-            ParsedConcepts = _parsedResults.Concepts;
+
+            _parsingScriptTask = Task.Run(() =>
+            {
+                _tokens = ContentTokenizer.TokenizeContent(script, scriptUri);
+                _parsedResults = dslParser.Parse(_tokens);
+                ParsedConcepts = _parsedResults.Concepts;
+            });
         }
 
         private readonly char[] specialChars = { ';', '}', '{' };
 
         private readonly char[] whitespaces = { '\n', ' ', '\r' };
 
-        public bool IsKeywordAtPosition(int line, int column)
+        public Task<bool> IsKeywordAtPositionAsync(int line, int column)
         {
-            var position = GetPosition(line, column);
-            var tokenIndex = -1;
-            for (var i = 0; i < _tokens.Count; i++)
+            return _parsingScriptTask.ContinueWith((result) =>
             {
-                if (_tokens[i].PositionInDslScript <= position && position <= (_tokens[i].PositionInDslScript + _tokens[i].Value.Length + 1))
-                    tokenIndex = i;
-            }
+                var position = GetPosition(line, column);
+                var tokenIndex = -1;
+                for (var i = 0; i < _tokens.Count; i++)
+                {
+                    if (_tokens[i].PositionInDslScript <= position && position <= (_tokens[i].PositionInDslScript + _tokens[i].Value.Length + 1))
+                        tokenIndex = i;
+                }
 
-            if (tokenIndex == 0)
-                return true;
-            if (tokenIndex > 0 && _tokens[tokenIndex - 1].Type == TokenType.Special)
-                return true;
+                if (tokenIndex == 0)
+                    return true;
+                if (tokenIndex > 0 && _tokens[tokenIndex - 1].Type == TokenType.Special)
+                    return true;
 
-            return false;
+                return false;
+            });
+        }
+
+        public Task<string> GetWordOnPositionAsync(int line, int column)
+        {
+            return _parsingScriptTask.ContinueWith((result) =>
+            {
+                return ReadWordOverHover(_script, GetPosition(line, column));
+            });
+        }
+
+        public Task<IConceptInfo> GetContextAtPositionAsync(int line, int column)
+        {
+            return _parsingScriptTask.ContinueWith((result) =>
+            {
+                var tokenContextEnd = TokenHelper.GetTokenIndexOfStartContext(_tokens, GetPosition(line, column));
+                var tokenContextStart = TokenHelper.FindFirstStartContextBefore(_tokens, tokenContextEnd);
+                var tokenContextStartPosition = _tokens[tokenContextStart].PositionInDslScript;
+                foreach (var parsedConcept in ParsedConcepts)
+                {
+                    if (parsedConcept.Location.Position == tokenContextStartPosition)
+                        return parsedConcept.Concept;
+                }
+                return null;
+            });
         }
 
         private int GetPreviousWhitespace(char[] charArray, int position)
@@ -55,24 +88,6 @@ namespace RhetosLSP.Dsl
                     return i;
             }
             return -1;
-        }
-
-        public string GetWordOnPosition(int line, int column)
-        {
-            return ReadWordOverHover(_script, GetPosition(line, column));
-        }
-
-        public IConceptInfo GetConceptAtPosition(int line, int column)
-        {
-            var tokenContextEnd = TokenHelper.GetTokenIndexOfStartContext(_tokens, GetPosition(line, column));
-            var tokenContextStart = TokenHelper.FindFirstStartContextBefore(_tokens, tokenContextEnd);
-            var tokenContextStartPosition = _tokens[tokenContextStart].PositionInDslScript;
-            foreach (var parsedConcept in ParsedConcepts)
-            {
-                if (parsedConcept.Location.Position == tokenContextStartPosition)
-                    return parsedConcept.Concept;
-            }
-            return null;
         }
 
         private int GetPosition(int line, int column)

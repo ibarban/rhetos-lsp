@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Rhetos.Dsl;
 
 namespace RhetosLSP.Dsl
 {
     public interface IParsedDslScript
     {
-        IEnumerable<ConceptInfoLSP> ParsedConcepts { get; }
+        Task<bool> IsKeywordAtPositionAsync(int line, int column);
 
-        bool IsKeywordAtPosition(int line, int column);
+        Task<string> GetWordOnPositionAsync(int line, int column);
 
-        string GetWordOnPosition(int line, int column);
-
-        IConceptInfo GetConceptAtPosition(int line, int column);
+        Task<IConceptInfo> GetContextAtPositionAsync(int line, int column);
     }
 }

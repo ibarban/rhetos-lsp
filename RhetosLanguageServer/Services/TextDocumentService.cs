@@ -32,7 +32,7 @@ namespace RhetosLanguageServer
         [JsonRpcMethod]
         public async Task<Hover> Hover(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
         {
-            string wordOverHover = _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri).GetWordOnPosition(position.Line, position.Character);
+            string wordOverHover = _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri).GetWordOnPositionAsync(position.Line, position.Character).Result;
 
             await Task.Delay(500, ct);
 
@@ -90,9 +90,9 @@ namespace RhetosLanguageServer
         {
             var parsedScript = _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri);
 
-            if (parsedScript.IsKeywordAtPosition(position.Line, position.Character))
+            if (parsedScript.IsKeywordAtPositionAsync(position.Line, position.Character).Result)
             {
-                var context = parsedScript.GetConceptAtPosition(position.Line, position.Character);
+                var context = parsedScript.GetContextAtPositionAsync(position.Line, position.Character).Result;
                 IEnumerable<ConceptInfoMetadata> conceptsInfoMetadataToApply = _conceptsInfoMetadata.Metadata.Where(x => !string.IsNullOrEmpty(x.Keyword));
                 if (context != null)
                     conceptsInfoMetadataToApply = conceptsInfoMetadataToApply.Where(x => x.Members.Count > 0 && x.Members[0].IsConceptInfo && x.Members[0].ValueType.IsAssignableFrom(context.GetType()));
