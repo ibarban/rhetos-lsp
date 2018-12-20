@@ -62,7 +62,7 @@ namespace RhetosLanguageServer
                 }
             };
             Session.Documents.TryAdd(textDocument.Uri, doc);
-            _parsedDslScriptProvider.UpdateScript(textDocument.Uri, Session.Documents[textDocument.Uri].Document.Content);
+            _parsedDslScriptProvider.AddScript(textDocument);
             var diag = Session.DiagnosticProvider.LintDocument(doc.Document, Session.Settings.MaxNumberOfProblems);
             await Client.Document.PublishDiagnostics(textDocument.Uri, diag);
         }
@@ -72,7 +72,7 @@ namespace RhetosLanguageServer
             ICollection<TextDocumentContentChangeEvent> contentChanges)
         {
             Session.Documents[textDocument.Uri].NotifyChanges(contentChanges);
-            _parsedDslScriptProvider.UpdateScript(textDocument.Uri, Session.Documents[textDocument.Uri].Document.Content);
+            _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri).UpdateDocument(contentChanges);
         }
 
         [JsonRpcMethod(IsNotification = true)]
@@ -83,6 +83,7 @@ namespace RhetosLanguageServer
                 await Client.Document.PublishDiagnostics(textDocument.Uri, new Diagnostic[0]);
             }
             Session.Documents.TryRemove(textDocument.Uri, out _);
+            _parsedDslScriptProvider.TryRemoveScript(textDocument.Uri);
         }
 
         [JsonRpcMethod]

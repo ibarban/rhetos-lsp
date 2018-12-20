@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RhetosLSP.Contracts;
+using System;
 
 namespace RhetosLSP.Dsl
 {
@@ -6,6 +7,8 @@ namespace RhetosLSP.Dsl
     {
         IParsedDslScript GetScriptOnPath(Uri path);
 
-        void UpdateScript(Uri path, string script);
+        void AddScript(TextDocumentItem textDocumentItem);
+
+        void TryRemoveScript(Uri path);
     }
 }

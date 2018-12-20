@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Rhetos.Dsl;
+using RhetosLSP.Contracts;
+using RhetosLSP.Utilities;
 
 namespace RhetosLSP.Dsl
 {
@@ -13,27 +15,35 @@ namespace RhetosLSP.Dsl
 
         private ParsedResults _parsedResults;
 
-        private readonly string _script;
-
         private List<Token> _tokens;
+
+        private TextDocument _document;
+
+        DslParser _dslParser;
 
         private Task _parsingScriptTask;
 
-        public ParsedDslScript(string script, Uri scriptUri, DslParser dslParser)
+        public ParsedDslScript(TextDocumentItem doc, DslParser dslParser)
         {
-            _script = script;
-
+            _dslParser = dslParser;
             _parsingScriptTask = Task.Run(() =>
             {
-                _tokens = ContentTokenizer.TokenizeContent(script, scriptUri);
-                _parsedResults = dslParser.Parse(_tokens);
+                _document = TextDocument.Load<FullTextDocument>(doc);
+                _tokens = ContentTokenizer.TokenizeContent(_document.Content, _document.Uri);
+                _parsedResults = _dslParser.Parse(_tokens);
                 ParsedConcepts = _parsedResults.Concepts;
             });
         }
 
-        private readonly char[] specialChars = { ';', '}', '{' };
-
-        private readonly char[] whitespaces = { '\n', ' ', '\r' };
+        public void UpdateDocument(ICollection<TextDocumentContentChangeEvent> contentChanges)
+        {
+            _parsingScriptTask.ContinueWith((results) => {
+                _document = _document.ApplyChanges(new List<TextDocumentContentChangeEvent>(contentChanges));
+                _tokens = ContentTokenizer.TokenizeContent(_document.Content, _document.Uri);
+                _parsedResults = _dslParser.Parse(_tokens);
+                ParsedConcepts = _parsedResults.Concepts;
+            });
+        }
 
         public Task<bool> IsKeywordAtPositionAsync(int line, int column)
         {
@@ -60,7 +70,7 @@ namespace RhetosLSP.Dsl
         {
             return _parsingScriptTask.ContinueWith((result) =>
             {
-                return ReadWordOverHover(_script, GetPosition(line, column));
+                return ReadWordOverHover(_document.Content, GetPosition(line, column));
             });
         }
 
@@ -80,16 +90,6 @@ namespace RhetosLSP.Dsl
             });
         }
 
-        private int GetPreviousWhitespace(char[] charArray, int position)
-        {
-            for (int i = position; i > 0; i--)
-            {
-                if (whitespaces.Contains(charArray[i]))
-                    return i;
-            }
-            return -1;
-        }
-
         private int GetPosition(int line, int column)
         {
             var lineIndex = 0;
@@ -97,7 +97,7 @@ namespace RhetosLSP.Dsl
             while (currentLine < line && lineIndex != -1)
             {
                 currentLine = currentLine + 1;
-                lineIndex = _script.IndexOf("\n", lineIndex + 1);
+                lineIndex = _document.Content.IndexOf("\n", lineIndex + 1);
             }
 
             if (currentLine != line)

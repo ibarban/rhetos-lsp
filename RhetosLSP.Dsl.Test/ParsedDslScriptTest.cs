@@ -3,6 +3,7 @@ using Rhetos.Dsl;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using RhetosLSP.Dsl;
+using RhetosLSP.Contracts;
 
 namespace RhetosLSP.Dsl.Test
 {
@@ -38,7 +39,8 @@ namespace RhetosLSP.Dsl.Test
 
         public static ParsedDslScript GenerateParsedDslScript(string script)
         {
-            return new ParsedDslScript(script, new Uri("http://test.com"), new DslParser(new IConceptInfo[] { new SimpleConcept(), new SimpleChildConcept(), new SimpleChildOfChildConcept() }));
+            var textDocumentItme = new TextDocumentItem { Text = script, Uri = new Uri("http://test.com") };
+            return new ParsedDslScript(textDocumentItme, new DslParser(new IConceptInfo[] { new SimpleConcept(), new SimpleChildConcept(), new SimpleChildOfChildConcept() }));
         }
 
         [TestMethod]

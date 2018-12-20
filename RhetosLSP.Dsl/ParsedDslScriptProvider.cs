@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RhetosLSP.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,15 +26,15 @@ namespace RhetosLSP.Dsl
             return parsedScript;
         }
 
-        public void UpdateScript(Uri path, string script)
+        public void AddScript(TextDocumentItem textDocumentItem)
         {
-            if (_parsedScripts.ContainsKey(path))
-            {
-                _parsedScripts[path] = new ParsedDslScript(script, path, _dslParser);
-            }
-            else {
-                _parsedScripts.Add(path, new ParsedDslScript(script, path, _dslParser));
-            }
+            _parsedScripts.Add(textDocumentItem.Uri, new ParsedDslScript(textDocumentItem, _dslParser));
+        }
+
+        public void TryRemoveScript(Uri path)
+        {
+            if(_parsedScripts.ContainsKey(path))
+                _parsedScripts.Remove(path);
         }
     }
 }

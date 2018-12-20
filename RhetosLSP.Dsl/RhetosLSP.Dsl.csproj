@@ -69,9 +69,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RhetosLSP.Contracts\RhetosLSP.Contracts.csproj">
+      <Project>{e3e1b6aa-38e8-4762-91d5-52aaea38af96}</Project>
+      <Name>RhetosLSP.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RhetosLSP.Dsl.Interfaces\RhetosLSP.Dsl.Interfaces.csproj">
       <Project>{431bc1e6-271a-40dc-ac1d-5f4a285ebe13}</Project>
       <Name>RhetosLSP.Dsl.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RhetosLSP.Utilities\RhetosLSP.Utilities.csproj">
+      <Project>{230c4c12-5cc7-4020-8ea2-e3f493057778}</Project>
+      <Name>RhetosLSP.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
