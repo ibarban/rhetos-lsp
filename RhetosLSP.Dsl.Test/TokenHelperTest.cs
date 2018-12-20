@@ -46,7 +46,7 @@ namespace RhetosLSP.Dsl.Test
                 new Token{ Value = "}", Type = TokenType.Special, PositionInDslScript = 12}
             };
 
-            Assert.AreEqual(1, TokenHelper.GetTokenIndexOfStartContext(ComplementTokens(tokens), 11));
+            Assert.AreEqual(1, TokenHelper.FindContextStart(ComplementTokens(tokens), 11));
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace RhetosLSP.Dsl.Test
                 new Token{ Value = "M2", Type = TokenType.Text, PositionInDslScript = 6},
             };
 
-            Assert.AreEqual(-1, TokenHelper.GetTokenIndexOfStartContext(ComplementTokens(tokens), 7));
+            Assert.AreEqual(-1, TokenHelper.FindContextStart(ComplementTokens(tokens), 7));
         }
     }
 }

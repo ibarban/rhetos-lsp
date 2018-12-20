@@ -5,11 +5,11 @@ namespace RhetosLSP.Dsl
 {
     public static class TokenHelper
     {
-        public static int FindFirstStartContextBefore(List<Token> tokens, int tokenIndex)
+        public static int FindConceptStart(List<Token> tokens, int tokenIndex)
         {
             for (var i = tokenIndex - 1; i >= 0; i--)
             {
-                if (tokens[i].Type == TokenType.Special && tokens[i].Value == "{")
+                if (tokens[i].Type == TokenType.Special)
                     return i + 1;
             }
             return 0;
@@ -29,7 +29,7 @@ namespace RhetosLSP.Dsl
             return -1;
         }
 
-        public static int GetTokenIndexOfStartContext(List<Token> tokens, int positionInScript)
+        public static int FindContextStart(List<Token> tokens, int positionInScript)
         {
             var tokenIndexStart = GetTokenIndexAfterPosition(tokens, positionInScript);
             while (tokenIndexStart > 0)

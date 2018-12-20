@@ -67,6 +67,22 @@ namespace RhetosLSP.Dsl.Test
         }
 
         [TestMethod]
+        public void ConceptAfterEmptyContextTest()
+        {
+            var parsedDslScript = GenerateParsedDslScript(
+                @"S P1
+{
+    SC C1{ }
+    SC C2{
+        S
+    }
+}
+");
+
+            Assert.AreEqual("SimpleChildConcept P1.C2", parsedDslScript.GetContextAtPositionAsync(4, 11).Result.GetKey());
+        }
+
+        [TestMethod]
         public void TwoConceptsInsideSameContextTest()
         {
             var parsedDslScript = GenerateParsedDslScript(

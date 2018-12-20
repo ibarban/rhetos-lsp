@@ -78,8 +78,8 @@ namespace RhetosLSP.Dsl
         {
             return _parsingScriptTask.ContinueWith((result) =>
             {
-                var tokenContextEnd = TokenHelper.GetTokenIndexOfStartContext(_tokens, GetPosition(line, column));
-                var tokenContextStart = TokenHelper.FindFirstStartContextBefore(_tokens, tokenContextEnd);
+                var tokenContextEnd = TokenHelper.FindContextStart(_tokens, GetPosition(line, column));
+                var tokenContextStart = TokenHelper.FindConceptStart(_tokens, tokenContextEnd);
                 var tokenContextStartPosition = _tokens[tokenContextStart].PositionInDslScript;
                 foreach (var parsedConcept in ParsedConcepts)
                 {
