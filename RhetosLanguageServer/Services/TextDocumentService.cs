@@ -44,16 +44,6 @@ namespace RhetosLanguageServer
 
             return new Hover { Contents = wordOverHover};
         }
-        
-        [JsonRpcMethod]
-        public SignatureHelp SignatureHelp(TextDocumentIdentifier textDocument, Position position)
-        {
-            return new SignatureHelp(new List<SignatureInformation>
-            {
-                new SignatureInformation("**Function1**", "Documentation1"),
-                new SignatureInformation("**Function2** <strong>test</strong>", "Documentation2"),
-            });
-        }
 
         [JsonRpcMethod(IsNotification = true)]
         public async Task DidOpen(TextDocumentItem textDocument)
@@ -83,13 +73,6 @@ namespace RhetosLanguageServer
         {
             Session.Documents[textDocument.Uri].NotifyChanges(contentChanges);
             _parsedDslScriptProvider.UpdateScript(textDocument.Uri, Session.Documents[textDocument.Uri].Document.Content);
-        }
-
-        [JsonRpcMethod(IsNotification = true)]
-        public void WillSave(TextDocumentIdentifier textDocument, TextDocumentSaveReason reason)
-        {
-            //Client.Window.LogMessage(MessageType.Log, "-----------");
-            //Client.Window.LogMessage(MessageType.Log, Documents[textDocument].Content);
         }
 
         [JsonRpcMethod(IsNotification = true)]
