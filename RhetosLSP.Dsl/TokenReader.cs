@@ -122,7 +122,7 @@ namespace RhetosLSP.Dsl
                 PositionInTokenList++;
         }
 
-        public ConceptInfoLocation GetLocation()
+        public LocationInScript GetLocation()
         {
             DslScript dslScript;
             int position;
@@ -142,8 +142,7 @@ namespace RhetosLSP.Dsl
                 dslScript = new DslScript { Script = "", Name = "", Path = "" };
                 position = 0;
             }
-            var text = dslScript.Script;
-            return new ConceptInfoLocation(text, ScriptPositionReporting.Line(text, position), ScriptPositionReporting.Column(text, position), position, dslScript.Path);
+            return new LocationInScript(dslScript, position);
         }
     }
 }

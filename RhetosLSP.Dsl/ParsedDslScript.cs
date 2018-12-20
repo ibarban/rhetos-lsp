@@ -25,26 +25,36 @@ namespace RhetosLSP.Dsl
             ParsedConcepts = _parsedResults.Concepts;
         }
 
+        private readonly char[] specialChars = { ';', '}', '{' };
+
+        private readonly char[] whitespaces = { '\n', ' ', '\r' };
+
         public bool IsKeywordAtPosition(int line, int column)
         {
             var position = GetPosition(line, column);
-            char[] specialChars = { ';', '}', '{' };
-            char[] charactersToIgnore = { '\n', ' ', '\r' };
-            var contentAsCharArray = _script.ToCharArray();
-
-            for (int i = position; i > 0; i--)
+            var tokenIndex = -1;
+            for (var i = 0; i < _tokens.Count; i++)
             {
-                var currentChar = contentAsCharArray[i];
-
-                if (charactersToIgnore.Contains(currentChar))
-                    continue;
-                if (!charactersToIgnore.Contains(currentChar) && !specialChars.Contains(currentChar)) //Regular word found
-                    return false;
-                if (specialChars.Contains(currentChar))
-                    return true;
+                if (_tokens[i].PositionInDslScript <= position && position <= (_tokens[i].PositionInDslScript + _tokens[i].Value.Length + 1))
+                    tokenIndex = i;
             }
 
+            if (tokenIndex == 0)
+                return true;
+            if (tokenIndex > 0 && _tokens[tokenIndex - 1].Type == TokenType.Special)
+                return true;
+
             return false;
+        }
+
+        private int GetPreviousWhitespace(char[] charArray, int position)
+        {
+            for (int i = position; i > 0; i--)
+            {
+                if (whitespaces.Contains(charArray[i]))
+                    return i;
+            }
+            return -1;
         }
 
         public string GetWordOnPosition(int line, int column)

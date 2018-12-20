@@ -5,6 +5,6 @@ namespace RhetosLSP.Dsl
     public class ConceptInfoLSP
     {
         public IConceptInfo Concept { get; set; }
-        public ConceptInfoLocation Location { get; set; }
+        public LocationInScript Location { get; set; }
     }
 }

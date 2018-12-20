@@ -14,7 +14,7 @@ namespace RhetosLSP.Dsl
 
     public class ParserError
     {
-        public ConceptInfoLocation Location;
+        public LocationInScript Location;
         public string Error;
     }
 }

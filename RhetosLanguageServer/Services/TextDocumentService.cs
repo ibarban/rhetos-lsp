@@ -110,10 +110,10 @@ namespace RhetosLanguageServer.Services
 
             if (parsedScript.IsKeywordAtPosition(position.Line, position.Character))
             {
-                var concept = parsedScript.GetConceptAtPosition(position.Line, position.Character);
+                var context = parsedScript.GetConceptAtPosition(position.Line, position.Character);
                 IEnumerable<ConceptInfoMetadata> conceptsInfoMetadataToApply = _conceptsInfoMetadata.Metadata.Where(x => !string.IsNullOrEmpty(x.Keyword));
-                if (concept != null)
-                    conceptsInfoMetadataToApply = conceptsInfoMetadataToApply.Where(x => x.Members.Count > 0 && x.Members[0].IsConceptInfo && x.Members[0].ValueType.IsAssignableFrom(concept.GetType()));
+                if (context != null)
+                    conceptsInfoMetadataToApply = conceptsInfoMetadataToApply.Where(x => x.Members.Count > 0 && x.Members[0].IsConceptInfo && x.Members[0].ValueType.IsAssignableFrom(context.GetType()));
                 else
                     conceptsInfoMetadataToApply = conceptsInfoMetadataToApply.Where(x => x.Members.Count > 0 && !x.Members[0].IsConceptInfo);
                 return new CompletionList(conceptsInfoMetadataToApply.Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.GetUserDescription(false) }));

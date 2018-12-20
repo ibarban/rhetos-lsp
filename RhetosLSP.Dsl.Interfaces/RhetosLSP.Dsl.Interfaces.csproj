@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Rhetos.Dom.Interfaces, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Dom.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Rhetos.Dsl.Interfaces, Version=2.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Dsl.Interfaces.dll</HintPath>
@@ -46,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConceptInfoDocumentation.cs" />
-    <Compile Include="ConceptInfoLocation.cs" />
+    <Compile Include="LocationInScript.cs" />
     <Compile Include="ConceptInfoLSP.cs" />
     <Compile Include="ConceptInfoMetadata.cs" />
     <Compile Include="IConceptsInfoMetadata.cs" />

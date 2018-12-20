@@ -35,7 +35,7 @@ namespace RhetosLSP.Dsl
                 {
                     RhetosVersion = SystemUtility.GetRhetosVersion()
                 },
-                Location = new ConceptInfoLocation()
+                Location = new LocationInScript()
             };
         }
 
@@ -109,7 +109,7 @@ namespace RhetosLSP.Dsl
         {
             var errors = new List<string>();
             List<Interpretation> possibleInterpretations = new List<Interpretation>();
-            ConceptInfoLocation conceptLocation = null;
+            LocationInScript conceptLocation = null;
 
             foreach (var conceptParser in conceptParsers)
             {

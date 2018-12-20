@@ -75,5 +75,25 @@ namespace RhetosLSP.Dsl.Test
 
             Assert.AreEqual("SimpleConcept T1", parsedDslScript.GetConceptAtPosition(2, 8).GetKey());
         }
+
+        [TestMethod]
+        public void DetectKeywordAtBeginningWhenCursorIsAtEndTest()
+        {
+            var parsedDslScript = GenerateParsedDslScript(
+                @"TestKey");
+
+            Assert.AreEqual(true, parsedDslScript.IsKeywordAtPosition(0, 6));
+        }
+
+        [TestMethod]
+        public void DetectKeywordInsideContextTest()
+        {
+            var parsedDslScript = GenerateParsedDslScript(
+                @"S T1 {
+    SC
+}");
+
+            Assert.AreEqual(true, parsedDslScript.IsKeywordAtPosition(1, 6));
+        }
     }
 }
