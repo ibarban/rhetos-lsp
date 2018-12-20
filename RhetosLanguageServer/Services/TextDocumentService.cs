@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Contracts;
-using LanguageServer.VsCode;
-using LanguageServer.VsCode.Contracts;
+using RhetosLSP.Contracts;
 using Rhetos.Logging;
 using RhetosLSP.Dsl;
 using System;
 
-namespace RhetosLanguageServer.Services
+namespace RhetosLanguageServer
 {
     [JsonRpcScope(MethodPrefix = "textDocument/")]
     public class TextDocumentService : RhetosLanguageServiceBase

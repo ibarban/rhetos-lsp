@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer.VsCode", "LanguageServer.VsCode\LanguageServer.VsCode.csproj", "{E3E1B6AA-38E8-4762-91D5-52AAEA38AF96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhetosLSP.Contracts", "RhetosLSP.Contracts\RhetosLSP.Contracts.csproj", "{E3E1B6AA-38E8-4762-91D5-52AAEA38AF96}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLanguageServer", "RhetosLanguageServer\RhetosLanguageServer.csproj", "{8D290072-8C41-48D3-B7F0-B1401335BB4B}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLSP.Dsl.Interfaces", "RhetosLSP.Dsl.Interfaces\RhetosLSP.Dsl.Interfaces.csproj", "{431BC1E6-271A-40DC-AC1D-5F4A285EBE13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLSP.Extensibility", "RhetosLSP.Extensibility\RhetosLSP.Extensibility.csproj", "{80E972B5-39A6-4881-A58B-0F694119C37F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosLSP.Utilities", "RhetosLSP.Utilities\RhetosLSP.Utilities.csproj", "{230C4C12-5CC7-4020-8EA2-E3F493057778}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{80E972B5-39A6-4881-A58B-0F694119C37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80E972B5-39A6-4881-A58B-0F694119C37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80E972B5-39A6-4881-A58B-0F694119C37F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{230C4C12-5CC7-4020-8EA2-E3F493057778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{230C4C12-5CC7-4020-8EA2-E3F493057778}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{230C4C12-5CC7-4020-8EA2-E3F493057778}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{230C4C12-5CC7-4020-8EA2-E3F493057778}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

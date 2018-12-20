@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Contracts;
-using LanguageServer.VsCode.Contracts;
+using RhetosLSP.Contracts;
 
-namespace RhetosLanguageServer.Services
+namespace RhetosLanguageServer
 {
     [JsonRpcScope(MethodPrefix = "completionItem/")]
     public class CompletionItemService : RhetosLanguageServiceBase

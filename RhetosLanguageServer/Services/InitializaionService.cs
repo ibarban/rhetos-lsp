@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
-using LanguageServer.VsCode.Contracts;
-using LanguageServer.VsCode.Contracts.Client;
+using RhetosLSP.Contracts;
+using RhetosLSP.Contracts;
 using Newtonsoft.Json.Linq;
 
-namespace RhetosLanguageServer.Services
+namespace RhetosLanguageServer
 {
     public class InitializaionService : RhetosLanguageServiceBase
     {

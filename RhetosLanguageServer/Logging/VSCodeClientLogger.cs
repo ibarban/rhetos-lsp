@@ -1,5 +1,5 @@
 ﻿using System;
-using LanguageServer.VsCode.Contracts;
+using RhetosLSP.Contracts;
 using Rhetos.Logging;
 
 namespace RhetosLanguageServer

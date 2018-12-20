@@ -4,10 +4,10 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Contracts;
-using LanguageServer.VsCode.Contracts;
+using RhetosLSP.Contracts;
 using Newtonsoft.Json.Linq;
 
-namespace RhetosLanguageServer.Services
+namespace RhetosLanguageServer
 {
     [JsonRpcScope(MethodPrefix = "workspace/")]
     public class WorkspaceService : RhetosLanguageServiceBase

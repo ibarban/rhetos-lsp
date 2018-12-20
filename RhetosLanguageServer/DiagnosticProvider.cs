@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using LanguageServer.VsCode.Contracts;
-using LanguageServer.VsCode.Server;
+using RhetosLSP.Contracts;
+using RhetosLSP.Utilities;
 
 namespace RhetosLanguageServer
 {
     public class DiagnosticProvider
     {
-
         public DiagnosticProvider()
         {
 
         }
-
 
         private static readonly string[] Keywords =
             {".NET Framework", ".NET Core", ".NET Standard", ".NET Compact", ".NET"};

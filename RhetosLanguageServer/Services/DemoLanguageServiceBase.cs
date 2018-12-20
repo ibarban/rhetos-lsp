@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using JsonRpc.Standard.Server;
-using LanguageServer.VsCode.Contracts;
-using LanguageServer.VsCode.Contracts.Client;
-using LanguageServer.VsCode.Server;
+using RhetosLSP.Contracts;
+using RhetosLSP.Utilities;
 
-namespace RhetosLanguageServer.Services
+namespace RhetosLanguageServer
 {
     public class RhetosLanguageServiceBase : JsonRpcService
     {

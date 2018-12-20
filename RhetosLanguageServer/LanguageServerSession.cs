@@ -2,16 +2,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.DynamicProxy.Client;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Server;
-using LanguageServer.VsCode.Contracts;
-using LanguageServer.VsCode.Contracts.Client;
-using LanguageServer.VsCode.Server;
+using RhetosLSP.Contracts;
+using RhetosLSP.Utilities;
 
 namespace RhetosLanguageServer
 {
