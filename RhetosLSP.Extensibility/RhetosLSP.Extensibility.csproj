@@ -34,11 +34,11 @@
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Extensibility.Interfaces, Version=2.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Rhetos.Extensibility.Interfaces, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Extensibility.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Utilities, Version=2.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Rhetos.Utilities, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Utilities.dll</HintPath>
     </Reference>

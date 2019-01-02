@@ -1,35 +1,39 @@
-﻿using Rhetos.Dsl;
+﻿using System;
+using Rhetos.Dsl;
+using Rhetos.Logging;
 using Rhetos.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace RhetosLSP.Dsl
 {
-    public class DslParser
+    public class DslTokenParser
     {
         protected readonly IConceptInfo[] _conceptInfoPlugins;
+        protected readonly ILogger _logger;
 
-        public DslParser(IConceptInfo[] conceptInfoPlugins)
+        public DslTokenParser(IConceptInfo[] conceptInfoPlugins, ILogProvider logProvider)
         {
             _conceptInfoPlugins = conceptInfoPlugins;
+            _logger = logProvider.GetLogger("DslParser");
         }
 
         public ParsedResults Parse(List<Token> tokens)
         {
             IEnumerable<IConceptParser> parsers = CreateGenericParsers();
             var parsedConcepts = ExtractConcepts(parsers, tokens);
-            //var alternativeInitializationGeneratedReferences = InitializeAlternativeInitializationConcepts(parsedConcepts);
+            var alternativeInitializationGeneratedReferences = InitializeAlternativeInitializationConcepts(parsedConcepts.Concepts);
             parsedConcepts.Concepts.Add(CreateInitializationConcept());
+            parsedConcepts.Concepts.AddRange(alternativeInitializationGeneratedReferences);
             return parsedConcepts;
         }
 
         //=================================================================
 
-        private ConceptInfoLSP CreateInitializationConcept()
+        private ConceptInfoWithMetadata CreateInitializationConcept()
         {
-            return new ConceptInfoLSP
+            return new ConceptInfoWithMetadata
             {
                 Concept = new InitializationConcept
                 {
@@ -60,12 +64,12 @@ namespace RhetosLSP.Dsl
         {
             var results = new ParsedResults
             {
-                Concepts = new List<ConceptInfoLSP>(),
+                Concepts = new List<ConceptInfoWithMetadata>(),
                 Errors = new List<ParserError>()
             };
             TokenReader tokenReader = new TokenReader(tokens, 0);
 
-            List<ConceptInfoLSP> newConcepts = new List<ConceptInfoLSP>();
+            List<ConceptInfoWithMetadata> newConcepts = new List<ConceptInfoWithMetadata>();
             Stack<IConceptInfo> context = new Stack<IConceptInfo>();
 
             tokenReader.SkipEndOfFile();
@@ -74,7 +78,7 @@ namespace RhetosLSP.Dsl
                 var conceptLocation = tokenReader.GetLocation();
                 try
                 {
-                    ConceptInfoLSP conceptInfo = ParseNextConcept(tokenReader, context, conceptParsers);
+                    ConceptInfoWithMetadata conceptInfo = ParseNextConcept(tokenReader, context, conceptParsers);
                     newConcepts.Add(conceptInfo);
                     results.Concepts.Add(conceptInfo);
                     UpdateContextForNextConcept(tokenReader, context, conceptInfo.Concept);
@@ -84,7 +88,7 @@ namespace RhetosLSP.Dsl
                     // When error occurs stop further parsing
                     results.Errors.Add(new ParserError
                     {
-                        Location = conceptLocation,
+                        Location = tokenReader.GetLocation(),
                         Error = e.Message
                     });
                     context.Clear();
@@ -105,7 +109,7 @@ namespace RhetosLSP.Dsl
 
         class Interpretation { public IConceptInfo ConceptInfo; public TokenReader NextPosition; }
 
-        protected ConceptInfoLSP ParseNextConcept(TokenReader tokenReader, Stack<IConceptInfo> context, IEnumerable<IConceptParser> conceptParsers)
+        protected ConceptInfoWithMetadata ParseNextConcept(TokenReader tokenReader, Stack<IConceptInfo> context, IEnumerable<IConceptParser> conceptParsers)
         {
             var errors = new List<string>();
             List<Interpretation> possibleInterpretations = new List<Interpretation>();
@@ -155,7 +159,7 @@ namespace RhetosLSP.Dsl
             }
 
             tokenReader.CopyFrom(possibleInterpretations.Single().NextPosition);
-            var concept = new ConceptInfoLSP
+            var concept = new ConceptInfoWithMetadata
             {
                 Concept = possibleInterpretations.Single().ConceptInfo,
                 Location = conceptLocation
@@ -201,11 +205,10 @@ namespace RhetosLSP.Dsl
             }
         }
 
-        protected IEnumerable<IConceptInfo> InitializeAlternativeInitializationConcepts(IEnumerable<IConceptInfo> parsedConcepts)
+        protected IEnumerable<ConceptInfoWithMetadata> InitializeAlternativeInitializationConcepts(IEnumerable<ConceptInfoWithMetadata> parsedConcepts)
         {
-            throw new NotImplementedException();
-            //var newConcepts = AlternativeInitialization.InitializeNonparsableProperties(parsedConcepts);
-            //return newConcepts;
+            var newConcepts = AlternativeInitialization.InitializeNonparsableProperties(parsedConcepts.Select(x => x.Concept), _logger);
+            return newConcepts.Select(x => new ConceptInfoWithMetadata { Concept = x, Location = null });
         }
     }
 }

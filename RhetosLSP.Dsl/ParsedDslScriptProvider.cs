@@ -9,11 +9,11 @@ namespace RhetosLSP.Dsl
 {
     public class ParsedDslScriptProvider : IParsedDslScriptProvider
     {
-        private readonly DslParser _dslParser;
+        private readonly DslTokenParser _dslParser;
 
         Dictionary<Uri, ParsedDslScript> _parsedScripts;
 
-        public ParsedDslScriptProvider(DslParser dslParser)
+        public ParsedDslScriptProvider(DslTokenParser dslParser)
         {
             _dslParser = dslParser;
             _parsedScripts = new Dictionary<Uri, ParsedDslScript>();

@@ -8,7 +8,7 @@ namespace RhetosLSP.Dsl
 {
     public class ParsedResults
     {
-        public List<ConceptInfoLSP> Concepts;
+        public List<ConceptInfoWithMetadata> Concepts;
         public List<ParserError> Errors;
     }
 

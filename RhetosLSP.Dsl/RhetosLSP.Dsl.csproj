@@ -39,6 +39,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Dsl.Interfaces.dll</HintPath>
     </Reference>
+    <Reference Include="Rhetos.Logging.Interfaces, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Logging.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Rhetos.Utilities, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Utilities.dll</HintPath>
@@ -54,8 +58,8 @@
     <Compile Include="ConceptDescriptionProvider.cs" />
     <Compile Include="ContentTokenizer.cs" />
     <Compile Include="ConceptsInfoMetadata.cs" />
-    <Compile Include="DslParser.cs" />
-    <Compile Include="GenericParser.cs" />
+    <Compile Include="DslTokenParser.cs" />
+    <Compile Include="IDslParserExtension.cs" />
     <Compile Include="IPluginFolderProvider.cs" />
     <Compile Include="ParsedDslScript.cs" />
     <Compile Include="ParsedDslScriptProvider.cs" />

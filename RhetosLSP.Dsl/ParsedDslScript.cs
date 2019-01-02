@@ -11,7 +11,7 @@ namespace RhetosLSP.Dsl
 {
     public class ParsedDslScript : IParsedDslScript
     {
-        private IEnumerable<ConceptInfoLSP> ParsedConcepts { get; set; }
+        private IEnumerable<ConceptInfoWithMetadata> ParsedConcepts { get; set; }
 
         private ParsedResults _parsedResults;
 
@@ -19,11 +19,11 @@ namespace RhetosLSP.Dsl
 
         private TextDocument _document;
 
-        DslParser _dslParser;
+        DslTokenParser _dslParser;
 
         private Task _parsingScriptTask;
 
-        public ParsedDslScript(TextDocumentItem doc, DslParser dslParser)
+        public ParsedDslScript(TextDocumentItem doc, DslTokenParser dslParser)
         {
             _dslParser = dslParser;
             _parsingScriptTask = Task.Run(() =>

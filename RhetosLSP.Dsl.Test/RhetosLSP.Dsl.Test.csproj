@@ -84,6 +84,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Dsl.Interfaces.dll</HintPath>
     </Reference>
+    <Reference Include="Rhetos.Logging">
+      <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhetos.Logging.Interfaces, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rhetos.2.9.0\lib\net451\Rhetos.Logging.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhetos.Utilities, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\rhetos-lsp\packages\Rhetos.2.9.0\lib\net451\Rhetos.Utilities.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -96,7 +107,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DslTokenParserTest.cs" />
     <Compile Include="ParsedDslScriptTest.cs" />
+    <Compile Include="RhetosCoreTests\DslParserTest.cs" />
+    <Compile Include="RhetosCoreTests\DslParser_Accessor.cs" />
+    <Compile Include="RhetosCoreTests\GenericParserHelper.cs" />
+    <Compile Include="RhetosCoreTests\Mocks\MockDslScript.cs" />
+    <Compile Include="RhetosCoreTests\Mocks\MockDslScriptsProvider.cs" />
+    <Compile Include="RhetosCoreTests\TestUtility.cs" />
     <Compile Include="TokenHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -109,6 +127,10 @@
       <Project>{e3e1b6aa-38e8-4762-91d5-52aaea38af96}</Project>
       <Name>RhetosLSP.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RhetosLSP.Dsl.Interfaces\RhetosLSP.Dsl.Interfaces.csproj">
+      <Project>{431bc1e6-271a-40dc-ac1d-5f4a285ebe13}</Project>
+      <Name>RhetosLSP.Dsl.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RhetosLSP.Dsl\RhetosLSP.Dsl.csproj">
       <Project>{d0bee72c-2fd4-4c82-a29d-ed5f4fb8a516}</Project>
       <Name>RhetosLSP.Dsl</Name>
@@ -118,6 +140,7 @@
       <Name>RhetosLSP.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

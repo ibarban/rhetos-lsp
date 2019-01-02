@@ -19,9 +19,9 @@ namespace RhetosLanguageServer
 
         private readonly ILogger _parsingLogger;
 
-        private readonly DslParser _dslParser;
+        private readonly DslTokenParser _dslParser;
 
-        public TextDocumentService(ILogProvider logProvider, IConceptsInfoMetadata conceptsInfoMetadata, DslParser dslParser, IParsedDslScriptProvider parsedDslScriptProvider)
+        public TextDocumentService(ILogProvider logProvider, IConceptsInfoMetadata conceptsInfoMetadata, DslTokenParser dslParser, IParsedDslScriptProvider parsedDslScriptProvider)
         {
             _conceptsInfoMetadata = conceptsInfoMetadata;
             _parsingLogger = logProvider.GetLogger("TextDocumentService");

@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="ConceptInfoDocumentation.cs" />
     <Compile Include="LocationInScript.cs" />
-    <Compile Include="ConceptInfoLSP.cs" />
+    <Compile Include="ConceptInfoWithMetadata.cs" />
     <Compile Include="ConceptInfoMetadata.cs" />
     <Compile Include="IConceptsInfoMetadata.cs" />
     <Compile Include="IParsedDslScript.cs" />
