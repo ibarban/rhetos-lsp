@@ -105,11 +105,7 @@ namespace RhetosLanguageServer
             builder.RegisterInstance<IPluginFolderProvider>(rhetosServerConfiguration);
             builder.RegisterType<ConceptDescriptionProvider>().SingleInstance();
             MefPluginScanner.FindAndRegisterPlugins<IConceptInfo>(builder, rhetosServerConfiguration.PluginsFolderPath);
-
-            if (debugMode)
-            {
-                builder.RegisterType<VSCodeClientLogProvider>().As<ILogProvider>().InstancePerLifetimeScope();
-            }
+            builder.RegisterType<VSCodeClientLogProvider>().As<ILogProvider>().InstancePerLifetimeScope();
             return builder;
         }
 
