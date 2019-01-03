@@ -99,7 +99,22 @@ namespace RhetosLanguageServer
                     conceptsInfoMetadataToApply = conceptsInfoMetadataToApply.Where(x => x.Members.Count > 0 && x.Members[0].IsConceptInfo && x.Members[0].ValueType.IsAssignableFrom(context.GetType()));
                 else
                     conceptsInfoMetadataToApply = conceptsInfoMetadataToApply.Where(x => x.Members.Count > 0 && !x.Members[0].IsConceptInfo);
-                return new CompletionList(conceptsInfoMetadataToApply.Select(x => new CompletionItem { Label = x.Keyword, Kind = CompletionItemKind.Keyword, Detail = x.GetUserDescription(false) }));
+
+                List<CompletionItem> completionsList = new List<CompletionItem>();
+                foreach(var conceptInfo in conceptsInfoMetadataToApply)
+                {
+                    if(!completionsList.Exists(x => x.Label == conceptInfo.Keyword))
+                    {
+                        completionsList.Add(new CompletionItem
+                        {
+                            Label = conceptInfo.Keyword,
+                            Kind = CompletionItemKind.Keyword,
+                            Detail = conceptInfo.GetUserDescription(false)
+                        });
+                    }
+                }
+
+                return new CompletionList(completionsList);
             }
             else
             {
