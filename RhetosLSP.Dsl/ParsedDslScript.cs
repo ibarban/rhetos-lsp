@@ -136,7 +136,8 @@ namespace RhetosLSP.Dsl
             }
             startPosition = startPosition == 0 ? 0 : startPosition + 1;
 
-            string foundWord = new string(contentAsCharArray, startPosition, (endPosition - startPosition));
+            string foundWord = endPosition > startPosition ? new string(contentAsCharArray, startPosition, (endPosition - startPosition)) : "";
+
             int startColumn = startPosition - lineIndex <= 0 ? 0 : startPosition - lineIndex - 1;
             int endColumn = endPosition - lineIndex <= 0 ? 0 : endPosition - lineIndex - 1;
 
