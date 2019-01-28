@@ -64,6 +64,10 @@
       <Project>{e3e1b6aa-38e8-4762-91d5-52aaea38af96}</Project>
       <Name>RhetosLSP.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RhetosLSP.Utilities\RhetosLSP.Utilities.csproj">
+      <Project>{230C4C12-5CC7-4020-8EA2-E3F493057778}</Project>
+      <Name>RhetosLSP.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Rhetos.Dsl;
 using RhetosLSP.Contracts;
+using RhetosLSP.Utilities;
 
 namespace RhetosLSP.Dsl
 {
@@ -12,7 +13,7 @@ namespace RhetosLSP.Dsl
 
         Task<bool> IsKeywordAtPositionAsync(int line, int column);
 
-        Task<string> GetWordOnPositionAsync(int line, int column);
+        Task<WordOnHover> GetWordOnPositionAsync(int line, int column);
 
         Task<IConceptInfo> GetContextAtPositionAsync(int line, int column);
     }

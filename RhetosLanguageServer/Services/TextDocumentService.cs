@@ -7,6 +7,7 @@ using RhetosLSP.Contracts;
 using Rhetos.Logging;
 using RhetosLSP.Dsl;
 using System;
+using RhetosLSP.Utilities;
 
 namespace RhetosLanguageServer
 {
@@ -32,17 +33,22 @@ namespace RhetosLanguageServer
         [JsonRpcMethod]
         public async Task<Hover> Hover(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
         {
-            string wordOverHover = _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri).GetWordOnPositionAsync(position.Line, position.Character).Result;
+            WordOnHover wordOverHover = await _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri).GetWordOnPositionAsync(position.Line, position.Character);
 
-            await Task.Delay(500, ct);
-
-            var foundConcept = _conceptsInfoMetadata.Metadata.FirstOrDefault(cim => cim.Keyword == wordOverHover);
+            var foundConcept = _conceptsInfoMetadata.Metadata.FirstOrDefault(cim => cim.Keyword == wordOverHover.Word);
             if (foundConcept != null && foundConcept.Documentation != null)
             {
-                return new Hover { Contents = foundConcept.Documentation.ConceptSummary};
+                return new Hover {
+                    Contents = foundConcept.Documentation.ConceptSummary,
+                    Range = new Range(wordOverHover.Start, wordOverHover.End)
+                };
             }
 
-            return new Hover { Contents = wordOverHover};
+            return new Hover
+            {
+                Contents = wordOverHover.Word,
+                Range = new Range(wordOverHover.Start, wordOverHover.End)
+            };
         }
 
         [JsonRpcMethod(IsNotification = true)]
@@ -109,17 +115,25 @@ namespace RhetosLanguageServer
                         {
                             Label = conceptInfo.Keyword,
                             Kind = CompletionItemKind.Keyword,
-                            Detail = conceptInfo.GetUserDescription(false)
+                            Detail = conceptInfo.GetUserDescription(false),
+                            CommitCharacters = Constants.CommitCharacters,
+                            Documentation = conceptInfo.Documentation != null ? conceptInfo.Documentation.ConceptSummary : ""
                         });
                     }
                 }
 
-                return new CompletionList(completionsList);
+                return new CompletionList(completionsList, false);
             }
             else
             {
                 return new CompletionList();
             }
+        }
+
+        [JsonRpcMethod]
+        public async Task<SignatureHelp> SignatureHelp(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
+        {
+            return null;
         }
     }
 }

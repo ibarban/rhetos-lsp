@@ -66,11 +66,11 @@ namespace RhetosLSP.Dsl
             });
         }
 
-        public Task<string> GetWordOnPositionAsync(int line, int column)
+        public Task<WordOnHover> GetWordOnPositionAsync(int line, int column)
         {
             return _parsingScriptTask.ContinueWith((result) =>
             {
-                return ReadWordOverHover(_document.Content, GetPosition(line, column));
+                return ReadWordOverHover(_document.Content, line, column);
             });
         }
 
@@ -106,9 +106,11 @@ namespace RhetosLSP.Dsl
                 return lineIndex + column;
         }
 
-        private string ReadWordOverHover(string content, int position)
+        private WordOnHover ReadWordOverHover(string content, int line, int column)
         {
-            char[] stopCharacters = { '\n', ' ', '\r', ';' };
+            int position = GetPosition(line, column);
+            int lineIndex = position != -1 ? position - column : 0;
+
             var contentAsCharArray = content.ToCharArray();
             int startPosition = 0;
             int endPosition = 0;
@@ -116,7 +118,7 @@ namespace RhetosLSP.Dsl
             for (int i = position; i >= 0; i--)
             {
                 var currentChar = contentAsCharArray[i];
-                if (stopCharacters.Contains(currentChar))
+                if (Constants.StopCharacters.Contains(currentChar))
                 {
                     startPosition = i;
                     break;
@@ -126,7 +128,7 @@ namespace RhetosLSP.Dsl
             for (int i = startPosition + 1; i < content.Length; i++)
             {
                 var currentChar = contentAsCharArray[i];
-                if (stopCharacters.Contains(currentChar))
+                if (Constants.StopCharacters.Contains(currentChar))
                 {
                     endPosition = i;
                     break;
@@ -134,9 +136,17 @@ namespace RhetosLSP.Dsl
             }
             startPosition = startPosition == 0 ? 0 : startPosition + 1;
 
-            string foundWord = new string(contentAsCharArray, startPosition, (endPosition - startPosition));
+            string foundWord = endPosition > startPosition ? new string(contentAsCharArray, startPosition, (endPosition - startPosition)) : "";
 
-            return foundWord;
+            int startColumn = startPosition - lineIndex <= 0 ? 0 : startPosition - lineIndex - 1;
+            int endColumn = endPosition - lineIndex <= 0 ? 0 : endPosition - lineIndex - 1;
+
+            return new WordOnHover
+            {
+                Word = foundWord,
+                Start = new Position(line, startColumn),
+                End = new Position(line, endColumn)
+            };
         }
     }
 }
