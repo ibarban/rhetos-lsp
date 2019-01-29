@@ -148,5 +148,48 @@ namespace RhetosLSP.Dsl
                 End = new Position(line, endColumn)
             };
         }
+
+        public Task<WordOnHover> GetWordSignatureHelpOnPositionAsync(int line, int column)
+        {
+            return _parsingScriptTask.ContinueWith((result) =>
+            {
+                return ReadNearestWord(_document.Content, line, column);
+            });
+        }
+
+        private WordOnHover ReadNearestWord(string content, int line, int column)
+        {
+            int currentLine = line;
+            int currentCol = column;
+            int position = GetPosition(line, column);
+
+            var contentAsCharArray = content.ToCharArray();
+            bool founded = false;
+            while (founded == false)
+            {
+                if(position < 0)
+                {
+                    break;
+                }
+                char currentChar = contentAsCharArray[position];
+                if (Constants.StopCharacters.Contains(currentChar))
+                {
+                    position = position - 1;
+                    currentCol = currentCol - 1;
+                    if (currentChar == '\n' || currentCol < 0)
+                    {
+                        currentLine = currentLine > 0 ? currentLine - 1 : 0;
+                        currentCol = _document.Content.LastIndexOf("\n", position) != 0 ? position - _document.Content.LastIndexOf("\n", position) - 1 : 0;
+                    }
+                } else
+                {
+                    founded = true;
+                }
+            }
+            if (!founded)
+                return null;
+            var foundWord = ReadWordOverHover(content, currentLine, currentCol);
+            return foundWord;
+        }
     }
 }

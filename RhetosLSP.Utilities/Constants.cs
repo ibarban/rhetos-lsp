@@ -10,5 +10,6 @@ namespace RhetosLSP.Utilities
     {
         public static readonly char[] CommitCharacters = new char[] { ' ', '{' };
         public static readonly char[] StopCharacters = new char[] { '\n', ' ', '\r', ';', '{', '}' };
+        public static readonly char[] SignatureHelpTriggerCharacters = new char[] { ' ', '{' };
     }
 }

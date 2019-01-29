@@ -133,6 +133,40 @@ namespace RhetosLanguageServer
         [JsonRpcMethod]
         public async Task<SignatureHelp> SignatureHelp(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
         {
+            var parsedScript = _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri);
+            var foundWord = await parsedScript.GetWordSignatureHelpOnPositionAsync(position.Line, position.Character);
+            bool isKeyword = await parsedScript.IsKeywordAtPositionAsync(foundWord.End.Line, foundWord.End.Character);
+            if (isKeyword)
+            {
+                List<SignatureInformation> signatures = new List<SignatureInformation>();
+                IEnumerable<ConceptInfoMetadata> conceptsInfoMetadata = _conceptsInfoMetadata
+                    .Metadata
+                    .Where(x => !string.IsNullOrEmpty(x.Keyword) && x.Keyword.Equals(foundWord.Word));
+                foreach(var conceptInfo in conceptsInfoMetadata)
+                {
+                    var members = conceptInfo.Members.Where(x => !x.IsConceptInfo).Select(x => $"<{x}>");
+                    string usage = members.Count() > 0 
+                        ? string.Format("{0} {1}",conceptInfo.Keyword, string.Join(" ", members))
+                        : conceptInfo.Keyword;
+                    ParameterInformation parameter = new ParameterInformation
+                    {
+                        Label = "",
+                        Documentation = usage
+                    };
+                    signatures.Add(
+                        new SignatureInformation
+                        {
+                            Label = conceptInfo.Keyword,
+                            Documentation = conceptInfo.Documentation != null ? conceptInfo.Documentation.ConceptSummary : "",
+                            Parameters = new List<ParameterInformation> { parameter }
+                        }
+                    );
+                }
+                return new SignatureHelp
+                {
+                    Signatures = signatures
+                };
+            }
             return null;
         }
     }
