@@ -9,7 +9,7 @@ namespace RhetosLSP.Dsl
         {
             for (var i = tokenIndex - 1; i >= 0; i--)
             {
-                if (tokens[i].Type == TokenType.Special)
+                if (tokens[i].Type == TokenType.Special && tokens[i].Value != ".")
                     return i + 1;
             }
             return 0;
