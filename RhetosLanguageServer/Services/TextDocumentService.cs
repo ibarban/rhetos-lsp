@@ -111,11 +111,12 @@ namespace RhetosLanguageServer
                 {
                     if(!completionsList.Exists(x => x.Label == conceptInfo.Keyword))
                     {
+                        int numberOverload = conceptsInfoMetadataToApply.Where(concept => concept.Keyword == conceptInfo.Keyword).Count();
                         completionsList.Add(new CompletionItem
                         {
                             Label = conceptInfo.Keyword,
                             Kind = CompletionItemKind.Keyword,
-                            Detail = conceptInfo.GetUserDescription(false),
+                            Detail = conceptInfo.GetUserDescription(false, numberOverload),
                             CommitCharacters = Constants.CommitCharacters,
                             Documentation = conceptInfo.Documentation != null ? conceptInfo.Documentation.ConceptSummary : ""
                         });
@@ -144,27 +145,11 @@ namespace RhetosLanguageServer
                     .Where(x => !string.IsNullOrEmpty(x.Keyword) && x.Keyword.Equals(foundWord.Word));
                 foreach(var conceptInfo in conceptsInfoMetadata)
                 {
-                    var members = conceptInfo.Members.Where(x => !x.IsConceptInfo).Select(x => $"<{x}>");
-                    string usage = members.Count() > 0 
-                        ? string.Format("{0} {1}",conceptInfo.Keyword, string.Join(" ", members))
-                        : conceptInfo.Keyword;
-                    ParameterInformation parameter = new ParameterInformation
-                    {
-                        Label = "",
-                        Documentation = usage
-                    };
-                    signatures.Add(
-                        new SignatureInformation
-                        {
-                            Label = conceptInfo.Keyword,
-                            Documentation = conceptInfo.Documentation != null ? conceptInfo.Documentation.ConceptSummary : "",
-                            Parameters = new List<ParameterInformation> { parameter }
-                        }
-                    );
+                    signatures.Add(conceptInfo.GetSignatureInformation(false));
                 }
                 return new SignatureHelp
                 {
-                    Signatures = signatures
+                    Signatures = signatures,
                 };
             }
             return null;
