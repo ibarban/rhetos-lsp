@@ -29,7 +29,7 @@ namespace RhetosLSP.Dsl
         {
             var propertyDescriptions = new List<string>();
             bool isFirst = true;
-            foreach (var memeber in Members)
+            foreach (var member in Members)
             {
                 if (isFirst && !includeParentConcept)
                 {
@@ -37,20 +37,20 @@ namespace RhetosLSP.Dsl
                     continue;
                 }
 
-                if (memeber.IsConceptInfo)
+                if (member.IsConceptInfo)
                 {
-                    var keywordOrType = ConceptInfoHelper.GetKeywordOrTypeName(Type);
-                    if (memeber.IsKey)
-                        propertyDescriptions.Add("Key " + " " + keywordOrType + " " + memeber.Name);
+                    var keywordOrType = ConceptInfoHelper.GetKeywordOrTypeName(member.ValueType);
+                    if (member.IsKey)
+                        propertyDescriptions.Add("Key " + " " + keywordOrType + " " + member.Name);
                     else
-                        propertyDescriptions.Add(keywordOrType + " " + memeber.Name);
+                        propertyDescriptions.Add(keywordOrType + " " + member.Name);
                 }
                 else
                 {
-                    if (memeber.IsKey)
-                        propertyDescriptions.Add("Key " + " " + memeber.ValueType.Name + " " + memeber.Name);
+                    if (member.IsKey)
+                        propertyDescriptions.Add("Key " + " " + member.ValueType.Name + " " + member.Name);
                     else
-                        propertyDescriptions.Add(memeber.ValueType.Name + " " + memeber.Name);
+                        propertyDescriptions.Add(member.ValueType.Name + " " + member.Name);
                 }
             }
 
