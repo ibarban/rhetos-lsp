@@ -127,7 +127,7 @@ namespace RhetosLanguageServer
             }
             else
             {
-                return new CompletionList();
+                return null;
             }
         }
 
@@ -136,10 +136,9 @@ namespace RhetosLanguageServer
         {
             var parsedScript = _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri);
             var foundWord = await parsedScript.GetWordSignatureHelpOnPositionAsync(position.Line, position.Character);
-            bool isKeyword = await parsedScript.IsKeywordAtPositionAsync(foundWord.End.Line, foundWord.End.Character);
-            if (isKeyword)
+            List<SignatureInformation> signatures = new List<SignatureInformation>();
+            if (foundWord != null)
             {
-                List<SignatureInformation> signatures = new List<SignatureInformation>();
                 IEnumerable<ConceptInfoMetadata> conceptsInfoMetadata = _conceptsInfoMetadata
                     .Metadata
                     .Where(x => !string.IsNullOrEmpty(x.Keyword) && x.Keyword.Equals(foundWord.Word));
@@ -147,12 +146,11 @@ namespace RhetosLanguageServer
                 {
                     signatures.Add(conceptInfo.GetSignatureInformation(false));
                 }
-                return new SignatureHelp
-                {
-                    Signatures = signatures,
-                };
             }
-            return null;
+            return new SignatureHelp
+            {
+                Signatures = signatures,
+            };
         }
     }
 }

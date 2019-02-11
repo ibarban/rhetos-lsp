@@ -23,6 +23,8 @@ namespace RhetosLSP.Dsl
 
         private Task _parsingScriptTask;
 
+        private IEnumerable<string> _conceptKeywords;
+
         public ParsedDslScript(TextDocumentItem doc, DslParser dslParser)
         {
             _dslParser = dslParser;
@@ -32,6 +34,7 @@ namespace RhetosLSP.Dsl
                 _tokens = ContentTokenizer.TokenizeContent(_document.Content, _document.Uri);
                 _parsedResults = _dslParser.Parse(_tokens);
                 ParsedConcepts = _parsedResults.Concepts;
+                _conceptKeywords = _dslParser.GetConceptKeywords();
             });
         }
 
@@ -153,11 +156,11 @@ namespace RhetosLSP.Dsl
         {
             return _parsingScriptTask.ContinueWith((result) =>
             {
-                return ReadNearestWord(_document.Content, line, column);
+                return ReadNearestKeyword(_document.Content, line, column);
             });
         }
 
-        private WordOnHover ReadNearestWord(string content, int line, int column)
+        private WordOnHover ReadNearestKeyword(string content, int line, int column)
         {
             int currentLine = line;
             int currentCol = column;
@@ -172,10 +175,14 @@ namespace RhetosLSP.Dsl
                     break;
                 }
                 char currentChar = contentAsCharArray[position];
+                position = position - 1;
+                currentCol = currentCol - 1;
                 if (Constants.StopCharacters.Contains(currentChar))
                 {
-                    position = position - 1;
-                    currentCol = currentCol - 1;
+                    if (currentChar == '{' || currentChar == '}' || currentChar == ';')
+                    {
+                        break;
+                    }
                     if (currentChar == '\n' || currentCol < 0)
                     {
                         currentLine = currentLine > 0 ? currentLine - 1 : 0;
@@ -183,7 +190,8 @@ namespace RhetosLSP.Dsl
                     }
                 } else
                 {
-                    founded = true;
+                    var word = ReadWordOverHover(content, currentLine, currentCol);
+                    founded = word == null ? false : _conceptKeywords.Contains(word.Word);
                 }
             }
             if (!founded)

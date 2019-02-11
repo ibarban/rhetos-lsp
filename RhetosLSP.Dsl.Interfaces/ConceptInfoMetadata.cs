@@ -62,6 +62,7 @@ namespace RhetosLSP.Dsl
         public SignatureInformation GetSignatureInformation(bool includeParentConcept)
         {
             var members = !includeParentConcept ? Members.Skip(1) : Members;
+            // Get usage syntax of keyword
             var memberTexts = members.Select(x => {
                 StringBuilder result = new StringBuilder();
                 string format = "<{0}:{1}>";
@@ -79,17 +80,18 @@ namespace RhetosLSP.Dsl
             string usage = memberTexts.Count() > 0
                 ? string.Format("{0} {1}", Keyword, string.Join(" ", memberTexts))
                 : Keyword;
-            ParameterInformation parameter = new ParameterInformation
+            // Define paramters information for signature of keyword
+            List<ParameterInformation> parameters = memberTexts.Select(x => new ParameterInformation
             {
-                Label = "",
-                Documentation = usage
-            };
+                Label = x,
+                Documentation = ""
+            }).ToList();
 
             return new SignatureInformation
             {
-                Label = Keyword,
+                Label = usage,
                 Documentation = Documentation != null ? Documentation.ConceptSummary : "",
-                Parameters = new List<ParameterInformation> { parameter }
+                Parameters = parameters
             };
         }
     }

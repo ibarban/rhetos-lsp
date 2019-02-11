@@ -16,6 +16,15 @@ namespace RhetosLSP.Dsl
             _conceptInfoPlugins = conceptInfoPlugins;
         }
 
+        public IEnumerable<string> GetConceptKeywords()
+        {
+            return _conceptInfoPlugins
+                .Select(conceptInfo => conceptInfo.GetType())
+                .Distinct()
+                .Select(conceptInfoType => ConceptInfoHelper.GetKeyword(conceptInfoType))
+                .Where(cm => !String.IsNullOrEmpty(cm));
+        }
+
         public ParsedResults Parse(List<Token> tokens)
         {
             IEnumerable<IConceptParser> parsers = CreateGenericParsers();
