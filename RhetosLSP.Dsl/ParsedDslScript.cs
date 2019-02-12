@@ -152,7 +152,7 @@ namespace RhetosLSP.Dsl
             };
         }
 
-        public Task<WordOnHover> GetWordSignatureHelpOnPositionAsync(int line, int column)
+        public Task<WordOnSignatureHelp> GetWordSignatureHelpOnPositionAsync(int line, int column)
         {
             return _parsingScriptTask.ContinueWith((result) =>
             {
@@ -160,14 +160,17 @@ namespace RhetosLSP.Dsl
             });
         }
 
-        private WordOnHover ReadNearestKeyword(string content, int line, int column)
+        private WordOnSignatureHelp ReadNearestKeyword(string content, int line, int column)
         {
             int currentLine = line;
             int currentCol = column;
             int position = GetPosition(line, column);
 
             var contentAsCharArray = content.ToCharArray();
+            Stack<string> keywordComponents = new Stack<string>();
+
             bool founded = false;
+            bool isAnotherWord = true;
             while (founded == false)
             {
                 if(position < 0)
@@ -188,16 +191,29 @@ namespace RhetosLSP.Dsl
                         currentLine = currentLine > 0 ? currentLine - 1 : 0;
                         currentCol = _document.Content.LastIndexOf("\n", position) != 0 ? position - _document.Content.LastIndexOf("\n", position) - 1 : 0;
                     }
-                } else
+                    // after finishing the first parameter, when typing space
+                    // parameter label offset will move to next
+                    if (currentChar == ' ' && keywordComponents.Count == 0) 
+                    {
+                        keywordComponents.Push(" ");
+                    }
+
+                    isAnotherWord = true;
+                } else if(isAnotherWord)
                 {
                     var word = ReadWordOverHover(content, currentLine, currentCol);
-                    founded = word == null ? false : _conceptKeywords.Contains(word.Word);
+                    if(word != null)
+                    {
+                        founded = _conceptKeywords.Contains(word.Word);
+                        keywordComponents.Push(word.Word);
+                        isAnotherWord = false;
+                    }
                 }
             }
             if (!founded)
                 return null;
-            var foundWord = ReadWordOverHover(content, currentLine, currentCol);
-            return foundWord;
+            string foundWord = keywordComponents.Pop();
+            return new WordOnSignatureHelp(foundWord, keywordComponents.Count > 0 ? keywordComponents.Count - 1 : 0);
         }
     }
 }

@@ -150,6 +150,7 @@ namespace RhetosLanguageServer
             return new SignatureHelp
             {
                 Signatures = signatures,
+                ActiveParameter = foundWord == null ? 0 : foundWord.ActiveParameter
             };
         }
     }
