@@ -11,11 +11,14 @@ namespace RhetosLSP.Dsl
     {
         private readonly DslParser _dslParser;
 
+        private readonly IConceptsInfoMetadata _conceptsInfoMetadata;
+
         Dictionary<Uri, ParsedDslScript> _parsedScripts;
 
-        public ParsedDslScriptProvider(DslParser dslParser)
+        public ParsedDslScriptProvider(DslParser dslParser, IConceptsInfoMetadata conceptsInfoMetadata)
         {
             _dslParser = dslParser;
+            _conceptsInfoMetadata = conceptsInfoMetadata;
             _parsedScripts = new Dictionary<Uri, ParsedDslScript>();
         }
 
@@ -28,7 +31,7 @@ namespace RhetosLSP.Dsl
 
         public void AddScript(TextDocumentItem textDocumentItem)
         {
-            _parsedScripts.Add(textDocumentItem.Uri, new ParsedDslScript(textDocumentItem, _dslParser));
+            _parsedScripts.Add(textDocumentItem.Uri, new ParsedDslScript(textDocumentItem, _dslParser, _conceptsInfoMetadata));
         }
 
         public void TryRemoveScript(Uri path)

@@ -11,6 +11,8 @@ namespace RhetosLSP.Dsl
 {
     public class ParsedDslScript : IParsedDslScript
     {
+        private readonly IConceptsInfoMetadata _conceptsInfoMetadata;
+
         private IEnumerable<ConceptInfoLSP> ParsedConcepts { get; set; }
 
         private ParsedResults _parsedResults;
@@ -23,18 +25,16 @@ namespace RhetosLSP.Dsl
 
         private Task _parsingScriptTask;
 
-        private IEnumerable<string> _conceptKeywords;
-
-        public ParsedDslScript(TextDocumentItem doc, DslParser dslParser)
+        public ParsedDslScript(TextDocumentItem doc, DslParser dslParser, IConceptsInfoMetadata conceptsInfoMetadata)
         {
             _dslParser = dslParser;
+            _conceptsInfoMetadata = conceptsInfoMetadata;
             _parsingScriptTask = Task.Run(() =>
             {
                 _document = TextDocument.Load<FullTextDocument>(doc);
                 _tokens = ContentTokenizer.TokenizeContent(_document.Content, _document.Uri);
                 _parsedResults = _dslParser.Parse(_tokens);
                 ParsedConcepts = _parsedResults.Concepts;
-                _conceptKeywords = _dslParser.GetConceptKeywords();
             });
         }
 
@@ -204,7 +204,7 @@ namespace RhetosLSP.Dsl
                     var word = ReadWordOverHover(content, currentLine, currentCol);
                     if(word != null)
                     {
-                        founded = _conceptKeywords.Contains(word.Word);
+                        founded = _conceptsInfoMetadata.Metadata.Select(x => x.Keyword).Contains(word.Word);
                         keywordComponents.Push(word.Word);
                         isAnotherWord = false;
                     }
