@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RhetosLSP.Contracts;
+using System.Text;
 
 namespace RhetosLSP.Dsl
 {
@@ -23,11 +25,11 @@ namespace RhetosLSP.Dsl
             Documentation = documentation;
         }
 
-        public string GetUserDescription(bool includeParentConcept)
+        public string GetUserDescription(bool includeParentConcept, int numberOverload = 1)
         {
             var propertyDescriptions = new List<string>();
             bool isFirst = true;
-            foreach (var memeber in Members)
+            foreach (var member in Members)
             {
                 if (isFirst && !includeParentConcept)
                 {
@@ -35,26 +37,62 @@ namespace RhetosLSP.Dsl
                     continue;
                 }
 
-                if (memeber.IsConceptInfo)
+                if (member.IsConceptInfo)
                 {
-                    var keywordOrType = ConceptInfoHelper.GetKeywordOrTypeName(Type);
-                    if (memeber.IsKey)
-                        propertyDescriptions.Add("Key " + " " + keywordOrType + " " + memeber.Name);
+                    var keywordOrType = ConceptInfoHelper.GetKeywordOrTypeName(member.ValueType);
+                    if (member.IsKey)
+                        propertyDescriptions.Add("Key " + " " + keywordOrType + " " + member.Name);
                     else
-                        propertyDescriptions.Add(keywordOrType + " " + memeber.Name);
+                        propertyDescriptions.Add(keywordOrType + " " + member.Name);
                 }
                 else
                 {
-                    if (memeber.IsKey)
-                        propertyDescriptions.Add("Key " + " " + memeber.ValueType.Name + " " + memeber.Name);
+                    if (member.IsKey)
+                        propertyDescriptions.Add("Key " + " " + member.ValueType.Name + " " + member.Name);
                     else
-                        propertyDescriptions.Add(memeber.ValueType.Name + " " + memeber.Name);
+                        propertyDescriptions.Add(member.ValueType.Name + " " + member.Name);
                 }
             }
 
-            var propertiesSummary = propertyDescriptions.Any() ? "Properties: " + string.Join(", ", propertyDescriptions.ToArray()) + "\n" : "";
-            var conceptSummary = Documentation == null ? "" : "Summary: " + Documentation.ConceptSummary;
-            return propertiesSummary + conceptSummary;
+            var propertiesSummary = propertyDescriptions.Any() ? "Properties: " + string.Join(", ", propertyDescriptions.ToArray()) : "";
+            var summary = string.Format(@"{0} (+ {1} overload(s))", propertiesSummary, numberOverload);
+            return summary;
+        }
+
+        public SignatureInformation GetSignatureInformation(bool includeParentConcept)
+        {
+            var members = !includeParentConcept ? Members.Skip(1) : Members;
+            // Get usage syntax of keyword
+            var memberTexts = members.Select(x => {
+                StringBuilder result = new StringBuilder();
+                string format = "<{0}:{1}>";
+                if (x.IsConceptInfo)
+                {
+                    var keywordOrType = ConceptInfoHelper.GetKeywordOrTypeName(x.ValueType);
+                    result.AppendFormat(format, x.Name, keywordOrType);
+                }
+                else
+                {
+                    result.AppendFormat(format, x.Name, x.ValueType.Name);
+                }
+                return result.ToString();
+            });
+            string usage = memberTexts.Count() > 0
+                ? string.Format("{0} {1}", Keyword, string.Join(" ", memberTexts))
+                : Keyword;
+            // Define paramters information for signature of keyword
+            List<ParameterInformation> parameters = memberTexts.Select(x => new ParameterInformation
+            {
+                Label = x,
+                Documentation = ""
+            }).ToList();
+
+            return new SignatureInformation
+            {
+                Label = usage,
+                Documentation = Documentation != null ? Documentation.ConceptSummary : "",
+                Parameters = parameters
+            };
         }
     }
 }

@@ -16,5 +16,7 @@ namespace RhetosLSP.Dsl
         Task<WordOnHover> GetWordOnPositionAsync(int line, int column);
 
         Task<IConceptInfo> GetContextAtPositionAsync(int line, int column);
+
+        Task<WordOnSignatureHelp> GetWordSignatureHelpOnPositionAsync(int line, int column);
     }
 }

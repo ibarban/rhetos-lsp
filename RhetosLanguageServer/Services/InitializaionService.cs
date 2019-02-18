@@ -1,17 +1,16 @@
-﻿using System;
-using System.Threading.Tasks;
-using JsonRpc.Standard;
+﻿using JsonRpc.Standard;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
-using RhetosLSP.Contracts;
-using RhetosLSP.Contracts;
 using Newtonsoft.Json.Linq;
+using RhetosLSP.Contracts;
+using RhetosLSP.Utilities;
+using System;
+using System.Threading.Tasks;
 
 namespace RhetosLanguageServer
 {
     public class InitializaionService : RhetosLanguageServiceBase
     {
-
         [JsonRpcMethod(AllowExtensionData = true)]
         public InitializeResult Initialize(int processId, Uri rootUri, ClientCapabilities capabilities,
             JToken initializationOptions = null, string trace = null)
@@ -19,7 +18,7 @@ namespace RhetosLanguageServer
             return new InitializeResult(new ServerCapabilities
             {
                 HoverProvider = true,
-                SignatureHelpProvider = new SignatureHelpOptions("()"),
+                SignatureHelpProvider = new SignatureHelpOptions(Constants.SignatureHelpTriggerCharacters),
                 CompletionProvider = new CompletionOptions(true, "."),
                 TextDocumentSync = new TextDocumentSyncOptions
                 {
@@ -39,7 +38,6 @@ namespace RhetosLanguageServer
         [JsonRpcMethod]
         public void Shutdown()
         {
-
         }
 
         [JsonRpcMethod(IsNotification = true)]

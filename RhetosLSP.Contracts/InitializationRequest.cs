@@ -327,7 +327,11 @@ namespace RhetosLSP.Contracts
         [JsonProperty]
         public TextDocumentSignatureInformationCapability SignatureInformation { get; set; }
     }
-    
+
+    /// <summary>
+    /// The client supports the following `SignatureInformation`
+    /// specific properties.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class TextDocumentSignatureInformationCapability
     {
@@ -337,6 +341,24 @@ namespace RhetosLSP.Contracts
         /// </summary>
         [JsonProperty]
         public IList<MarkupKind> DocumentationFormat { get; set; }
+
+        /// <summary>
+        /// Client capabilities specific to parameter information.
+        /// </summary>
+        [JsonProperty]
+        public TextDocumentParameterInformationCapability ParameterInformation { get; set; }
     }
 
+    [JsonObject(MemberSerialization.OptIn)]
+    public class TextDocumentParameterInformationCapability
+    {
+        /// <summary>
+        /// The client supports processing label offsets instead of a
+        /// simple label string.
+        /// 
+        /// Since version LSP 3.14.0
+        /// </summary>
+        [JsonProperty]
+        public bool LabelOffsetSupport { get; set; }
+    }
 }

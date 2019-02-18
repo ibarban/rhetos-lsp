@@ -111,11 +111,12 @@ namespace RhetosLanguageServer
                 {
                     if(!completionsList.Exists(x => x.Label == conceptInfo.Keyword))
                     {
+                        int numberOverload = conceptsInfoMetadataToApply.Where(concept => concept.Keyword == conceptInfo.Keyword).Count();
                         completionsList.Add(new CompletionItem
                         {
                             Label = conceptInfo.Keyword,
                             Kind = CompletionItemKind.Keyword,
-                            Detail = conceptInfo.GetUserDescription(false),
+                            Detail = conceptInfo.GetUserDescription(false, numberOverload),
                             CommitCharacters = Constants.CommitCharacters,
                             Documentation = conceptInfo.Documentation != null ? conceptInfo.Documentation.ConceptSummary : ""
                         });
@@ -126,14 +127,31 @@ namespace RhetosLanguageServer
             }
             else
             {
-                return new CompletionList();
+                return null;
             }
         }
 
         [JsonRpcMethod]
         public async Task<SignatureHelp> SignatureHelp(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
         {
-            return null;
+            var parsedScript = _parsedDslScriptProvider.GetScriptOnPath(textDocument.Uri);
+            var foundWord = await parsedScript.GetWordSignatureHelpOnPositionAsync(position.Line, position.Character);
+            List<SignatureInformation> signatures = new List<SignatureInformation>();
+            if (foundWord != null)
+            {
+                IEnumerable<ConceptInfoMetadata> conceptsInfoMetadata = _conceptsInfoMetadata
+                    .Metadata
+                    .Where(x => !string.IsNullOrEmpty(x.Keyword) && x.Keyword.Equals(foundWord.Word));
+                foreach(var conceptInfo in conceptsInfoMetadata)
+                {
+                    signatures.Add(conceptInfo.GetSignatureInformation(false));
+                }
+            }
+            return new SignatureHelp
+            {
+                Signatures = signatures,
+                ActiveParameter = foundWord == null ? 0 : foundWord.ActiveParameter
+            };
         }
     }
 }

@@ -9,7 +9,7 @@ namespace RhetosLSP.Dsl
         {
             for (var i = tokenIndex - 1; i >= 0; i--)
             {
-                if (tokens[i].Type == TokenType.Special)
+                if (tokens[i].Type == TokenType.Special && tokens[i].Value != ".")
                     return i + 1;
             }
             return 0;
@@ -48,11 +48,14 @@ namespace RhetosLSP.Dsl
             while (tokenIndexStart >= 0)
             {
                 tokenIndexStart = tokenIndexStart - 1;
-                if (tokens[tokenIndexStart].Type == TokenType.Special && tokens[tokenIndexStart].Value == "{")
-                    return;
+                if(tokenIndexStart >= 0)
+                {
+                    if (tokens[tokenIndexStart].Type == TokenType.Special && tokens[tokenIndexStart].Value == "{")
+                        return;
 
-                if (tokens[tokenIndexStart].Type == TokenType.Special && tokens[tokenIndexStart].Value == "}")
-                    GetContextEndForTokenIndex(tokens, ref tokenIndexStart);
+                    if (tokens[tokenIndexStart].Type == TokenType.Special && tokens[tokenIndexStart].Value == "}")
+                        GetContextEndForTokenIndex(tokens, ref tokenIndexStart);
+                }
             }
         }
 

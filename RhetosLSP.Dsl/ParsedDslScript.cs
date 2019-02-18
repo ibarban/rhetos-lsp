@@ -11,6 +11,8 @@ namespace RhetosLSP.Dsl
 {
     public class ParsedDslScript : IParsedDslScript
     {
+        private readonly IConceptsInfoMetadata _conceptsInfoMetadata;
+
         private IEnumerable<ConceptInfoLSP> ParsedConcepts { get; set; }
 
         private ParsedResults _parsedResults;
@@ -23,9 +25,10 @@ namespace RhetosLSP.Dsl
 
         private Task _parsingScriptTask;
 
-        public ParsedDslScript(TextDocumentItem doc, DslParser dslParser)
+        public ParsedDslScript(TextDocumentItem doc, DslParser dslParser, IConceptsInfoMetadata conceptsInfoMetadata)
         {
             _dslParser = dslParser;
+            _conceptsInfoMetadata = conceptsInfoMetadata;
             _parsingScriptTask = Task.Run(() =>
             {
                 _document = TextDocument.Load<FullTextDocument>(doc);
@@ -147,6 +150,70 @@ namespace RhetosLSP.Dsl
                 Start = new Position(line, startColumn),
                 End = new Position(line, endColumn)
             };
+        }
+
+        public Task<WordOnSignatureHelp> GetWordSignatureHelpOnPositionAsync(int line, int column)
+        {
+            return _parsingScriptTask.ContinueWith((result) =>
+            {
+                return ReadNearestKeyword(_document.Content, line, column);
+            });
+        }
+
+        private WordOnSignatureHelp ReadNearestKeyword(string content, int line, int column)
+        {
+            int currentLine = line;
+            int currentCol = column;
+            int position = GetPosition(line, column);
+
+            var contentAsCharArray = content.ToCharArray();
+            Stack<string> keywordComponents = new Stack<string>();
+
+            bool founded = false;
+            bool isAnotherWord = true;
+            while (founded == false)
+            {
+                if(position < 0)
+                {
+                    break;
+                }
+                char currentChar = contentAsCharArray[position];
+                position = position - 1;
+                currentCol = currentCol - 1;
+                if (Constants.StopCharacters.Contains(currentChar))
+                {
+                    if (currentChar == '{' || currentChar == '}' || currentChar == ';')
+                    {
+                        break;
+                    }
+                    if (currentChar == '\n' || currentCol < 0)
+                    {
+                        currentLine = currentLine > 0 ? currentLine - 1 : 0;
+                        currentCol = _document.Content.LastIndexOf("\n", position) != 0 ? position - _document.Content.LastIndexOf("\n", position) - 1 : 0;
+                    }
+                    // after finishing the first parameter, when typing space
+                    // parameter label offset will move to next
+                    if (currentChar == ' ' && keywordComponents.Count == 0) 
+                    {
+                        keywordComponents.Push(" ");
+                    }
+
+                    isAnotherWord = true;
+                } else if(isAnotherWord)
+                {
+                    var word = ReadWordOverHover(content, currentLine, currentCol);
+                    if(word != null)
+                    {
+                        founded = _conceptsInfoMetadata.Metadata.Select(x => x.Keyword).Contains(word.Word);
+                        keywordComponents.Push(word.Word);
+                        isAnotherWord = false;
+                    }
+                }
+            }
+            if (!founded)
+                return null;
+            string foundWord = keywordComponents.Pop();
+            return new WordOnSignatureHelp(foundWord, keywordComponents.Count > 0 ? keywordComponents.Count - 1 : 0);
         }
     }
 }

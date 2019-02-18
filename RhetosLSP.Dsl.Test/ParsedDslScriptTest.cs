@@ -39,8 +39,12 @@ namespace RhetosLSP.Dsl.Test
 
         public static ParsedDslScript GenerateParsedDslScript(string script)
         {
-            var textDocumentItme = new TextDocumentItem { Text = script, Uri = new Uri("http://test.com") };
-            return new ParsedDslScript(textDocumentItme, new DslParser(new IConceptInfo[] { new SimpleConcept(), new SimpleChildConcept(), new SimpleChildOfChildConcept() }));
+            var textDocumentItem = new TextDocumentItem { Text = script, Uri = new Uri("http://test.com") };
+            IConceptInfo[] conceptPrototypes = new IConceptInfo[] { new SimpleConcept(), new SimpleChildConcept(), new SimpleChildOfChildConcept() };
+            ConceptsInfoMetadata conceptsInfoMetadata = new ConceptsInfoMetadata(conceptPrototypes, new ConceptDescriptionProvider(null, conceptPrototypes));
+            return new ParsedDslScript(textDocumentItem, 
+                new DslParser(conceptPrototypes),
+                conceptsInfoMetadata);
         }
 
         [TestMethod]
@@ -112,6 +116,39 @@ namespace RhetosLSP.Dsl.Test
 }");
 
             Assert.AreEqual(true, parsedDslScript.IsKeywordAtPositionAsync(1, 6).Result);
+        }
+
+        [TestMethod]
+        public void FindKeywordAfterIt()
+        {
+            var parsedDslScript = GenerateParsedDslScript(
+                @"S T1 {
+    SC
+}");
+            var actual = parsedDslScript.GetWordSignatureHelpOnPositionAsync(0, 1).Result;
+            Assert.AreEqual("S", actual.Word);
+        }
+
+        [TestMethod]
+        public void FindKeywordAfterItsParameter()
+        {
+            var parsedDslScript = GenerateParsedDslScript(
+                @"S T1 {
+    SC
+}");
+            var actual = parsedDslScript.GetWordSignatureHelpOnPositionAsync(0, 4).Result;
+            Assert.AreEqual("S", actual.Word);
+        }
+
+        [TestMethod]
+        public void FindKeywordInsideBracket()
+        {
+            var parsedDslScript = GenerateParsedDslScript(
+                @"S T1 {
+
+}");
+            var actual = parsedDslScript.GetWordSignatureHelpOnPositionAsync(1, 1).Result;
+            Assert.AreEqual(null, actual);
         }
     }
 }
